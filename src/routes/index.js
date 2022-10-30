@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const express = reqiure('express');
 const Threads = require('./userAccountThreads.route');
 const userAccount = require('./userAccount.route');
@@ -20,3 +21,13 @@ router.get('/userpost', (req, res) => {
 });
 
 module.exports = router;
+=======
+import { Router } from "express";
+const router = Router()
+
+const ThreadRoutes = require('./thread.js')
+const authUser = require('../middlewares/authUser.js')
+
+router.use(authUser)
+router.use('/thread', ThreadRoutes)
+>>>>>>> cf06f3fe2fa301f27314dd685bc34dd6dfe0a3fd
