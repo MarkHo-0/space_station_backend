@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 // db.js
 const Mongoose = require("mongoose")
-const localDB = `mongodb://localhost:27017/role_auth`
+const localDB = `mongodb://localhost:3000/role_auth`
 const connectDB = async () => {
   await Mongoose.connect(localDB, {
     useNewUrlParser: true,
@@ -11,7 +10,6 @@ const connectDB = async () => {
 }
 module.exports = connectDB
 
-=======
 const mysql = require('mysql');
 
 exports.connect = function() {
@@ -25,4 +23,3 @@ exports.connect = function() {
     connection.connect();
     return connection
 }
->>>>>>> cf06f3fe2fa301f27314dd685bc34dd6dfe0a3fd
