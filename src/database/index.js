@@ -21,5 +21,5 @@ exports.connect = function() {
     });
     
     connection.connect();
-    return connection
+    return connection;
 }
