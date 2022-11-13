@@ -1,25 +1,30 @@
 // db.js
-const Mongoose = require("mongoose")
-const localDB = `mongodb://localhost:3000/role_auth`
-const connectDB = async () => {
-  await Mongoose.connect(localDB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+var mysql = require('mysql')
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "space-station",
+  password: "password"
+})
+
+con.connect(function(err){
+  if(err) throw err;
+  console.log("Connected!")
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  con.query(sql, function(err, result){
+    if (err) throw err;
+    console.log("Result:" + result);
+  });
+});
+
+con.connect(function(err){
+  if(err) throw err;
+  console.log("Connection acomplished");
+  con.query("CREATE DATABASE mydb", function(err,result){
+    if (err) throw err;
+    console.log("Database created")
   })
-  console.log("MongoDB Connected")
-}
-module.exports = connectDB
-
-const mysql = require('mysql');
-
-exports.connect = function() {
-    const connection = mysql.createConnection({
-        host     : 'localhost',
-        user     : 'me',
-        password : 'secret',
-        database : 'my_db'
-    });
-    
-    connection.connect();
-    return connection;
-}
+})

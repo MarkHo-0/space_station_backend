@@ -1,9 +1,9 @@
 exports.login = async (req, res, next) => {
 
     try {
-      const user = await userInfo.findOne({ username, password })
+      const user = await userInfo.findOne({ sid, pwd, device_name })
       if (!user) {
-        res.status(401).json({
+        res.status(404).json({
           message: "Login not successful",
           error: "User not found",
         })
@@ -14,7 +14,7 @@ exports.login = async (req, res, next) => {
         })
       }
     } catch (error) {
-      res.status(400).json({
+      res.status(401).json({
         message: "An error occurred",
         error: error.message,
       })

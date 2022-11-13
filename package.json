@@ -1,32 +1,5 @@
 {
-  "name": "sapce-station_backend",
-  "version": "0.0.1",
-  "description": "The backend of Space Station app.",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MarkHo-0/sapce-station_backend.git"
-  },
-  "author": [
-    {
-      "name": "Mark Ho",
-      "email": "20187553@learner.hkuspace.hku.hk"
-    },
-    {
-      "name": "Flenix Lee",
-      "email": "20183899@learner.hkuspace.hku.hk"
-    }
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/MarkHo-0/sapce-station_backend/issues"
-  },
-  "homepage": "https://github.com/MarkHo-0/sapce-station_backend#readme",
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql": "^2.18.1"
+    "express": "^4.18.2"
   }
 }
