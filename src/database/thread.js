@@ -6,10 +6,10 @@ import con from "./index.js";
   ]
 
   function thread_by_tid(id){
-    con.query("SELECT * FROM thread WHERE tid=") + id, function (error, results, fields){
+    con.query("SELECT * FROM thread WHERE tid=" + id, function (error, results, fields){
       if (error) return null
       return results
-    }
+    })
   }
  
   function thread_heat_by_tid(id){

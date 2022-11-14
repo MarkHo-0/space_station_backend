@@ -8,10 +8,10 @@ import con from "./index.js";
   ]
  
   function getUserDataByUID(id){
-    con.query("SELECT * FROM user_info WHERE uid=") + id, function (error, results, fields){
+    con.query("SELECT * FROM user_info WHERE uid=" + id, function (error, results, fields){
       if (error) return null
       return results
-    }
+    })
   }
 
   function getUser_vf_by_vf_code(id){
