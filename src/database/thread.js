@@ -5,14 +5,16 @@ import con from "./index.js";
     "CREATE TABLE thread_heat (id INT AUTO_INCREMENT PRIMARY KEY , tid INTEGER, degree INTEGER , adjust INTEGER)"
   ]
 
-  function thread(tid){
+  function thread_by_tid(id){
     con.query("SELECT * FROM thread WHERE tid=") + id, function (error, results, fields){
       if (error) return null
       return results
     }
   }
-  
-  
+ 
+  function thread_heat_by_tid(id){
+  con.query("SELECT * FROM thread WHERE tid =")
+  }
   
 
   

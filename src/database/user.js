@@ -25,3 +25,4 @@ import con from "./index.js";
   function getUser_baned_by_Ban_by_uid (SMALLINT){
     con.query("SELECT * FROM user_baned WHERE ban_by_uid = ")
   }
+  //
