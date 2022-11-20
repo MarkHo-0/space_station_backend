@@ -1,18 +1,15 @@
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "yourusername",
-    password: "yourpassword",
-    database: "mydb"
-  });
+import con from "./index.js";
   
-  con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    var sql = "CREATE TABLE program (id INT AUTO_INCREMENT PRIMARY KEY, code MEDIUMINT , eng_name VARCHAR(30) , fid SMALLINT)";
-    con.query(sql, function (err, result) {
-      if (err) throw err;
-      console.log("user_info Table created");
-    });
-  });
+  const table = [
+    "CREATE TABLE program (id INT AUTO_INCREMENT PRIMARY KEY, code MEDIUMINT , eng_name VARCHAR(30) , fid SMALLINT)",
+  ]
+  
+  function program(code){
+    con.query("SELECT * FROM thread WHERE code=" + id, function (error, results, fields){
+      if (error) return null
+      return results
+    })
+  }
+   
 
  

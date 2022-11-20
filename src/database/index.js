@@ -7,6 +7,8 @@ var con = mysql.createConnection({
   password: "password"
 })
 
+export default con
+
 con.connect(function(err){
   if(err) throw err;
   console.log("Connected!")
