@@ -1,31 +1,17 @@
-const express = reqiure('express');
-const Threads = require('./userAccountThreads.route');
-const userAccount = require('./userAccount.route');
-const userlogin = require('./userLogin.route')
-const register = require('./userRegister.route')
-
-const router = express.Router();
-
-router.use('/userAccountThreads', Threads);
-router.use('/userAccounts', accounts);
-
-router.get('/', (req,res) => res.send('test time'));
-router.get('/userpost', (req, res) => {
-    const healthcheck = {
-        uptime: process.uptime(),
-        message: 'ok',
-        timestamp: Date.now()
-    };
-    res.send(JSON.stringify(healthcheck));
-});
-
-module.exports = router;
 import { Router } from "express";
-const Router = Router()
+const router = Router()
+
+import { mountDB } from '../middlewares/mountDB.js'
+import { getConnection } from '../database/index.js'
+import { getHomeData } from '../controllers/home.js'
 
 const ThreadRoutes = require('./thread.js')
-const authUser = require('../middlewares/authUser.js')
 
-router.use(authUser)
+//掛載資料庫入口到每個請求上
+router.use(mountDB(getConnection))
+
+//路由分發
+router.get('/home', getHomeData)
 router.use('/thread', ThreadRoutes)
-//
+
+module.exports = router;

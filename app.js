@@ -1,15 +1,14 @@
 const express = require('express')
 require('dotenv').config();
 
-const app = express();
 const database = require('./src/database/index')
 const API_ROUTE = require('./src/routes/index.js')
 
-const db_connection = await database.connect()
-import { getDB } from './src/middlewares/database.js'
+//連接資料庫
+await database.connect()
+console.log('Connected to database.')
 
+//初始化路由
+const app = express();
 app.use(express.json())
- 
-app.use(getDB(db_connection))
-
-app.use('/api',API_ROUTE)
+app.use('/api', API_ROUTE)

@@ -1,5 +1,6 @@
-import {Request, Response} from 'express'
+import {RouteFunction} from '../types/expres.js'
 
-function getHomePageData(req, res) {
-    req.app.db
+/** @type {RouteFunction} */
+export function getHomeData(req, res) {
+    
 }

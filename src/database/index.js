@@ -1,7 +1,14 @@
+import { Thread } from './thread.js';
+import { User } from './user';
+import { Comment } from './comment';
+import { DataBaseModel } from '../types/database.js'
+
 const mysql = require('mysql2')
 
-let connection;
+/** @type {DataBaseModel} */
+let db;
 
+//連接資料庫函數
 export async function connect() {
   const { DB_USER, DB_PWD, DB_HOST, DB_NAME } = process.env
 
@@ -9,7 +16,7 @@ export async function connect() {
     throw new Error('Cannot find database configuration.')
   }
 
-  const db = mysql.createPool({
+  const connection = mysql.createPool({
     host: DB_HOST,
     user: DB_USER,
     password: DB_PWD,
@@ -17,13 +24,15 @@ export async function connect() {
   })
 
   try {
-    await db.connect()
-    connection = db
+    await connection.connect()
+    db = {
+      'thread': new Thread(connection),
+      'comment': new Comment(connection),
+      'user': new User(connection)
+    }
   } catch (error) {
     throw new Error('Faild to connect the database.')
   }
-
-  return db
 }
 
-export const getDB = () => connection;
+export const getDB = () => db;

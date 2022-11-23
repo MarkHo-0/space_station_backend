@@ -1,9 +1,11 @@
 import { Router } from "express";
 const router = Router()
 
-import { getAllThreads, getThreadByID} from "../controllers/thread.js"
+import * as Controller from "../controllers/thread.js"
 
-router.get('/', getAllThreads)
+//獲取貼文列表
+router.get('/', Controller.getThreads)
+//透過編號獲取指定貼文
+router.get('/:tid', Controller.getThreadByID)
 
-router.get('/:tid/page/:pg', getThreadByID)
-//
+module.exports = router;

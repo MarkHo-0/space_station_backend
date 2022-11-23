@@ -1,12 +1,9 @@
-import {Request, Response} from 'express'
+import {RouteFunction} from '../types/express.js'
 
 const MAX_THREADS_PRE_GET = 15;
 
-/**
- * @param {Request} req 
- * @param {Response} res 
- */
-function getAllThreads(req, res) {
+/** @type {RouteFunction} */
+export function getThreads(req, res) {
     const {cursor, order, cid, fid} = req.params
 
     if (typeof cursor != 'string' || cursor < 1) cursor = 1
@@ -16,11 +13,7 @@ function getAllThreads(req, res) {
 
 }
 
-function getThreadByID(req, res) {
+export function getThreadByID(req, res) {
 
 }
 
-module.exports = {
-    getAllThreads,
-    getThreadByID
-}
