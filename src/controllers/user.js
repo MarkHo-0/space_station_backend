@@ -6,6 +6,7 @@ const get = function(req, res){
 
 const getAll = function(req, res){
     res.send(app.getAll());
+    req.app.db.getBlockedUser(userid)
 }
 
 module.exports = {

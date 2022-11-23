@@ -7,22 +7,22 @@ import con from "./index.js";
     "CREATE TABLE user_baned (id INT AUTO_INCREMENT PRIMARY KEY, uid INTEGER , ban_type SMALLINT , unban_time CURRENT_TIMESTAMP , ban_by_uid SMALLINT)",
   ]
  
-  function getUserDataByUID(id){
-    con.query("SELECT * FROM user_info WHERE uid=" + id, function (error, results, fields){
+ async function getUserByUid(uid){
+    con.query("SELECT * FROM user_info WHERE uid=" + uid, function (error, results, fields){
       if (error) return null
       return results
     })
   }
 
-  function getUser_vf_by_vf_code(id){
-    con.query("SELECT * FROM user_vf WHERE vf_code=")
+  function getUserVerificationData(sid){
+    con.query("SELECT * FROM user_vf WHERE vf_code = " + sid)
   }
 
-  function getUser_pwd_by_hashed_pwd_ (VARCHAR){
-    con.query("SELECT * FROM user_pwd WHERE hashed_pwd = ")
+  function hasUidAndPassword(uid, pwd){
+    con.query("SELECT uid FROM user_pwd WHERE uid = " + uid + " AND hashed_pwd = " + pwd)
   }
 
-  function getUser_baned_by_Ban_by_uid (SMALLINT){
-    con.query("SELECT * FROM user_baned WHERE ban_by_uid = ")
+  function getBanedUser(uid){
+    con.query("SELECT * FROM user_baned WHERE uid = " + uid)
   }
   //
