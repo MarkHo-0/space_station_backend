@@ -1,6 +1,7 @@
 import { Thread } from './thread.js';
 import { User } from './user';
 import { Comment } from './comment';
+import { News } from './news'
 import { DataBaseModel } from '../types/database.js'
 
 const mysql = require('mysql2')
@@ -28,7 +29,8 @@ export async function connect() {
     db = {
       'thread': new Thread(connection),
       'comment': new Comment(connection),
-      'user': new User(connection)
+      'user': new User(connection),
+      'news': new News(connection)
     }
   } catch (error) {
     throw new Error('Faild to connect the database.')
