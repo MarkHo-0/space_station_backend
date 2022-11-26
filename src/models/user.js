@@ -54,3 +54,10 @@ export class SimpleUser {
         }
     }
 }
+
+export function SimpleUserFromDB(d) {
+    return new SimpleUser(
+        d.uid,
+        d.nickname
+    )
+}

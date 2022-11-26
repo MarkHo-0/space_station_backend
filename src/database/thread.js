@@ -26,7 +26,10 @@ export class Thread{
    */
   async getHeatest(quantity, cursor) {
     //TODO: 完成熱度搜尋資料庫操作
-    const threads = []
+    const [_, threads] = await this.db.promise().execute(
+      `SELECT * FROM thread_heat h INNER JOIN thread t LIMIT ? ORDER BY h.degree DESC`,
+      [quantity, cursor]
+    )
 
     return threads.map( t => threadFormDB(t) )
   }
@@ -40,7 +43,21 @@ export class Thread{
 
   async getNewest(quantity, cursor) {
     //TODO: 完成時間搜尋資料庫操作
-    const threads = []
+    const [_, threads] = await this.db.promise().execute(`
+        SELECT
+          t.tid, t.pid, t.fid, t.title, t.create_time,
+          u.uid, u.nickname, c.like_count, c.dislike_count,
+          (SELECT COUNT(*) - 1 FROM comments WHERE comments.tid = t.tid) as 'reply_count'
+        FROM
+          threads t
+          INNER JOIN users u ON u.uid = t.sender_uid
+          INNER JOIN comments c on c.cid = t.content_cid
+        WHERE
+          c.soft_blocked = 0
+        ORDER BY t.last_update_time DESC
+        LIMIT ? OFFSET ?`,
+      [quantity, cursor]
+    )
 
     return threads.map( t => threadFormDB(t) )
   }

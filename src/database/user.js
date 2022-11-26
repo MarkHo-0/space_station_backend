@@ -8,9 +8,9 @@ export class User{
   constructor(db) {
     this.db = db
   }
-
-  async getByToken(token) {
-    const [_, fields] = await this.db.promise().execute('SELECT * FROM user_login_state WHERE token=?', [token])
+  
+  async getByLoginToken(token) {
+    const [_, fields] = await this.db.promise().execute(`SELECT * FROM user_login_state WHERE token=?`, [token])
 
     if (fields.length == 0) {
       throw new Error('Token Invalid')
