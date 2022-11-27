@@ -35,29 +35,54 @@ export class Thread{
   }
 
   async getHeatestWithParams(page_id, faculty_id, quantity, cursor) {
-    //TODO: 完成熱度搜尋資料庫操作
-    const threads = []
+    const [_, threads] = await this.db.promise().execute(`--sql
+      SELECT
+        t.tid, t.title, t.create_time, t.last_update_time, t.pid, t.fid,
+        u.uid, u.nickname, c.like_count, c.dislike_count,
+        (SELECT COUNT(cc.tid) - 1 FROM comments cc WHERE cc.tid = t.tid) as 'reply_count',
+        (SELECT IF(t.pined_cid IS NULL, 0, 1)) as 'has_pinned_reply'
+      FROM 
+        threads_heat h
+        INNER JOIN threads t ON t.tid = h.tid
+        INNER JOIN users u ON u.uid = t.sender_uid 
+        INNER JOIN comments c ON c.cid = t.content_cid 
+      WHERE
+        t.pid = ? AND t.fid = ? AND c.status < 3
+      ORDER BY 
+        h.degree DESC,
+        t.last_update_time DESC
+      LIMIT ? OFFSET ?`,
+      [page_id, faculty_id, quantity, cursor]
+    )
+
+    if (threads.length == 0) {
+      return []
+    }
 
     return threads.map( t => threadFormDB(t) )
   }
 
   async getNewest(quantity, cursor) {
-    //TODO: 完成時間搜尋資料庫操作
-    const [_, threads] = await this.db.promise().execute(`
+    const [_, threads] = await this.db.promise().execute(`--sql
         SELECT
-          t.tid, t.pid, t.fid, t.title, t.create_time,
+          t.tid, t.pid, t.fid, t.title, t.create_time, t.last_update_time,
           u.uid, u.nickname, c.like_count, c.dislike_count,
-          (SELECT COUNT(*) - 1 FROM comments WHERE comments.tid = t.tid) as 'reply_count'
+          (SELECT COUNT(*) - 1 FROM comments WHERE comments.tid = t.tid) as 'reply_count',
+          (SELECT IF(t.pined_cid IS NULL, 0, 1)) as 'has_pinned_reply'
         FROM
           threads t
           INNER JOIN users u ON u.uid = t.sender_uid
           INNER JOIN comments c on c.cid = t.content_cid
         WHERE
-          c.soft_blocked = 0
+          c.status < 3
         ORDER BY t.last_update_time DESC
         LIMIT ? OFFSET ?`,
       [quantity, cursor]
     )
+
+    if (threads.length == 0) {
+      return []
+    }
 
     return threads.map( t => threadFormDB(t) )
   }
