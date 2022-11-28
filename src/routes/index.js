@@ -3,6 +3,8 @@ const router = Router()
 
 import { mountDB } from '../middlewares/mountDB.js'
 import { getDB } from '../database/index.js'
+import { tryAuthUser } from '../middlewares/authUser'
+
 import { getHomeData } from '../controllers/home.js'
 
 const ThreadRoutes = require('./thread.js')
@@ -11,7 +13,7 @@ const ThreadRoutes = require('./thread.js')
 router.use(mountDB(getDB))
 
 //路由分發
-router.get('/home', getHomeData)
+router.get('/home', tryAuthUser, getHomeData)
 router.use('/thread', ThreadRoutes)
 
 module.exports = router;
