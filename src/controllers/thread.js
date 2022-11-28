@@ -28,8 +28,9 @@ export function getThreads(req, res) {
     })
 }
 
-export function getThreadByID(req, res) {
-
+/** @type {RouteFunction} */
+export function getThread(req, res) {
+    
 }
 
 export function getComments(req, res) {

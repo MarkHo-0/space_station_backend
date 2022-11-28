@@ -31,7 +31,7 @@ export class Comment{
    * @param {int} cid 留言編號
    * @param {int} type_id 互動類型編號
    * @param {int} user_id 互動者編號
-   * @return {boolean}
+   * @return {Promise<boolean>}
    */
   async react(cid, type_id, user_id) {
 
@@ -40,7 +40,7 @@ export class Comment{
   /**
    * 頂置一則留言
    * @param {int} cid 留言編號
-   * @return {boolean}
+   * @return {Promise<boolean>}
    */
   async pin(cid){
   }
@@ -48,7 +48,7 @@ export class Comment{
   /**
    * 去除頂置一則留言
    * @param {int} cid 留言編號
-   * @return {boolean}
+   * @return {Promise<boolean>}
    */
   async unpin(cid){
 
@@ -59,7 +59,7 @@ export class Comment{
    * @param {int} cid 留言編號
    * @param {int} reason_id 舉報的原因編號
    * @param {int} user_id 舉報的用戶編號
-   * @return {boolean}
+   * @return {Promise<boolean>}
    */
   async report(cid, reason_id, user_id){
   }
