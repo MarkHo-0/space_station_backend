@@ -46,3 +46,8 @@ export class Comment {
         return json
     }
 }
+
+export function commentFromDB(d) {
+    //TODO: 將資料庫格式轉為JavaScript對象
+    return new Comment()
+}
