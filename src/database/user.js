@@ -23,11 +23,12 @@ export class User{
 }
 
 async function getUserByUid(uid){
-  con.query("SELECT * FROM user_info WHERE uid=" + uid, function (error, results, fields){
-    if (error) return null
-    return results
-  })
-}
+  const [_, fields] = await this.db.promise().execute(`--sql
+    SELECT * FROM user_info WHERE uid =?`,
+    [uid]
+    )
+  }
+
 
 function getUserVerificationData(sid){
   con.query("SELECT * FROM user_vf WHERE vf_code = " + sid)
@@ -38,5 +39,8 @@ function hasUidAndPassword(uid, pwd){
 }
 
 function getBanedUser(uid){
-  con.query("SELECT * FROM user_baned WHERE uid = " + uid)
+  const [_, fields] = await this.db.promise().execute(`--sql
+  SELECT * FROM users_baned WHERE uid= ?`,
+  [uid]
+  )
 }
