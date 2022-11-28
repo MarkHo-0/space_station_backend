@@ -38,7 +38,7 @@ function hasUidAndPassword(uid, pwd){
   con.query("SELECT uid FROM user_pwd WHERE uid = " + uid + " AND hashed_pwd = " + pwd)
 }
 
-function getBanedUser(uid){
+async function getBanedUser(uid){
   const [_, fields] = await this.db.promise().execute(`--sql
   SELECT * FROM users_baned WHERE uid= ?`,
   [uid]
