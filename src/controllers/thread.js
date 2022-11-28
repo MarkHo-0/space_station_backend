@@ -1,7 +1,9 @@
 import {RouteFunction} from '../types/express.js'
 import { Thread } from '../models/thread.js';
+import { Comment } from '../models/comment.js';
 
 const MAX_THREADS_PRE_GET = 15;
+const MAX_COMMENTS_PRE_GET = 15;
 
 /** @type {RouteFunction} */
 export function getThreads(req, res) {
@@ -36,4 +38,18 @@ export function getThreads(req, res) {
 export function getThreadByID(req, res) {
 
 }
+
+export function getComments(req, res) {
+    const tid = req.query("tid")
+    const cursor = req.params("cursor")
+
+
+    if (typeof cursor != 'string' || cursor < 1) cursor = null
+    if (typeof tid != 'number' ) return res.status(400).send()
+
+    
+
+
+}
+
 

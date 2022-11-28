@@ -10,7 +10,28 @@ export class Thread{
   }
 
   async get(tid) {
-    const [_, fields] = await this.db.promise().execute('SELECT * FROM thread WHERE tid=?', [tid])
+    const [_, fields] = await this.db.promise().execute(`--sql
+    SELECT
+    t.cid, t.content, t.create_time, t.cid, t.content, t.create_time
+    SELECT
+    c.cid, c.content, c.create_time,
+    (SELECT COUNT(c.tid) - 1 FROM comments c WHERE c.tid = t.tid) as 'reply_to_title'
+    (SELECT COUNT(c.content) - 1 FROM comments c WHERE c.content = t.content) as 'reply_to_comment'
+    (SELECT COUNT(c.create_time) - 1 FROM comments c WHERE c.create_time = c.content) as 'reply_to+comment_time'
+    FROM
+    reply_to  
+    INNER JOIN threads t ON t.tid = c.tid
+    INNER JOIN comments c ON t.cid = c.content
+    INNER JOIN comments c ON t.create_time = c.create_time 
+    WHERE
+      t.cid = ? AND t.cid = ? AND c.stats < 3
+    ORDER BY
+      h.degree DESC,
+      t.create_time DESC
+      LIMIT? OFFSET?`,
+    [tid]
+    )
+    
 
     if (fields.length == 0) {
       throw Error('Thread not found!')
@@ -108,11 +129,5 @@ export class Thread{
   }
 }
 
-
-const table = [
-  "CREATE TABLE thread (id INT AUTO_INCREMENT PRIMARY KEY, tid INTEGER, pid INTEGER , fid INTEGER , content_cid INTEGER , sender_uid INTEGER , create_time CURRENT_TIMESTAMP , title VARCHAR(20) , pined_cid INTEGER)",
-  "CREATE TABLE thread_heat (id INT AUTO_INCREMENT PRIMARY KEY , tid INTEGER, degree INTEGER , adjust INTEGER)"
-]
-  
 
   

@@ -6,7 +6,6 @@ const HOME_PAGE_THREADS_COUNT = 5
 export function getHomeData(req, res) {
     const getThreadsFunc = req.db.thread.getHeatest(HOME_PAGE_THREADS_COUNT)
     const getSchoolNewsFunc = req.db.news.getAll()
-
     Promise.all([getThreadsFunc, getSchoolNewsFunc]).then(data => {
         const homeData = {
             threads: data[0],
@@ -23,3 +22,4 @@ export function getHomeData(req, res) {
         res.status(400).send(e)
     })
 };
+
