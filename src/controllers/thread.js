@@ -29,9 +29,15 @@ export function getThreads(req, res) {
 }
 
 /** @type {RouteFunction} */
+export function postThread(req, res) {
+    
+}
+
+/** @type {RouteFunction} */
 export function getThread(req, res) {
     
 }
+
 
 /** @type {RouteFunction} */
 export function searchThread(req, res) {
