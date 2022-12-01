@@ -33,17 +33,9 @@ export function getThread(req, res) {
     
 }
 
-export function getComments(req, res) {
-    const tid = req.query("tid")
-    const cursor = req.params("cursor")
-
-
-    if (typeof cursor != 'string' || cursor < 1) cursor = null
-    if (typeof tid != 'number' ) return res.status(400).send()
-
+/** @type {RouteFunction} */
+export function searchThread(req, res) {
     
-
-
 }
 
 
