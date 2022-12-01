@@ -1,24 +1,32 @@
 import { Router } from "express";
 const router = Router()
 
-import {getAllUsers , getUserByID} from "../controllers/user.js"
+import { authUser, tryAuthUser } from '../middlewares/authUser'
 
-router.get('/', getAllUsers)
+import * as Controller from "../controllers/user.js"
 
-router.get('/:tid/page/:pg', getUserByID)
+//獲取用戶資料
+router.get('/:uid', tryAuthUser, Controller.getUserData)
 
-const userAccountController = reqiure('../controllers/user.js');
-const userAccountThreadsRoute = require('./userAccountThreads.route');
+//獲取用戶貼文
+router.get('/:uid/thread', Controller.getUserThreads)
 
-router.route('/user');
-    get(userAccountsController.getAll);
+//獲取用戶賬號狀態
+router.get('/:sid/state', Controller.getUserState)
 
-router.route('/user/: pasword');
-    get(userAccountController.get);
+//用戶註冊
+router.post('/register', Controller.userRegister)
 
-router.route('/user/: username');
-    get(userAccountController.get);
+//用戶登入
+router.post('/login', Controller.userLogin)
 
-router.use('/:Account_id', userAccountThreadsRoute);
+//用戶登出
+router.post('/logout', authUser, Controller.userLogout)
+
+//更改用戶科系
+router.patch('/faculty', authUser, Controller.updateUserFaculty)
+
+//更改用戶名稱
+router.patch('/nickname', authUser, Controller.updateUserNickname)
 
 module.exports = router;
