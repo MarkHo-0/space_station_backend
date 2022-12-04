@@ -1,4 +1,5 @@
 import { Pool } from 'mysql2'
+import { UserFromDB, SimpleUserFromDB } from '../models/user.js'
     
 export class User{
 
@@ -8,8 +9,21 @@ export class User{
   constructor(db) {
     this.db = db
   }
+
+  async getOne(uid) {
+    return SimpleUserFromDB()
+  }
+
+  async getMany(uid_array) {
+    const users_raw = []
+    return users_raw.map( u => SimpleUser())
+  }
+
+  async getInfo(uid) {
+    return UserFromDB()
+  }
   
-  async getByLoginToken(token) {
+  async getOneByLoginToken(token) {
     const [_, fields] = await this.db.promise().execute(`SELECT * FROM user_login_state WHERE token=?`, [token])
 
     if (fields.length == 0) {
@@ -17,30 +31,50 @@ export class User{
     }
 
     //TODO: 待完善令牌獲取用戶資料過程
+    return SimpleUserFromDB(fields[0])
+  }
+
+  async setLoginToken(uid, token) {
     return true
   }
 
-}
-
-async function getUserByUid(uid){
-  const [_, fields] = await this.db.promise().execute(`--sql
-    SELECT * FROM user_info WHERE uid =?`,
-    [uid]
-    )
+  async removeLoginToken(uid, token) {
+    return true
   }
 
+  async hasUidAndPwd(uid, pwd) {
+    return true
+  }
 
-function getUserVerificationData(sid){
-  con.query("SELECT * FROM user_vf WHERE vf_code = " + sid)
-}
+  async createOne(user_data) {
+    return 0 //更換為用戶編號
+  }
 
-function hasUidAndPassword(uid, pwd){
-  con.query("SELECT uid FROM user_pwd WHERE uid = " + uid + " AND hashed_pwd = " + pwd)
-}
+  async updateNickname(uid, newName) {
+    return true
+  }
 
-async function getBanedUser(uid){
-  const [_, fields] = await this.db.promise().execute(`--sql
-  SELECT * FROM users_baned WHERE uid= ?`,
-  [uid]
-  )
+  async updadeFaculty(uid, newFid) {
+    return true
+  }
+
+  async isVerificationDataValid(sid, vf_data) {
+    return true
+  }
+
+  async setVerificationData(sid, vf_data) {
+    return true
+  }
+
+  async createVerificationData(sid, vf_data) {
+    return true
+  }
+
+  async setBannedStatus(uid, type_id, expired_on) {
+    return true
+  }
+
+  async getBannedStatus(uid) {
+    return 0
+  }
 }

@@ -38,6 +38,10 @@ export class User{
     }
 }
 
+export function UserFromDB(d) {
+  return new User() //TODO: 完成資料填充
+}
+
 export class SimpleUser {
     user_id = ''
     nickname = ''
