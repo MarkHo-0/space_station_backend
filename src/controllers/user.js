@@ -1,5 +1,6 @@
-import { RouteFunction } from '../types/express.js'
 import { User, SimpleUser } from '../models/user.js'
+
+/** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 /** @type {RouteFunction} */
 export function getUserData(req, res) {

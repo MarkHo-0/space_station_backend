@@ -1,12 +1,13 @@
- import { Request, Response, NextFunction } from 'express'
- import { DataBaseModel } from './database.js'
+ import express from 'express';
  import { SimpleUser } from '../models/user.js'
+
+ /** @typedef {import('./database.js').DataBaseModel} DBModel */
  
 // express 的 request 拓展，加入了資料庫入口和用戶資料
 
  /**
  * @typedef {Object} ChildType
- * @property {DataBaseModel} db
+ * @property {DBModel} db
  * @property {SimpleUser} [user]
  * @typedef {Request & ChildType} CompleteRequest
  */
@@ -16,8 +17,8 @@
 /**
  * @callback RouteFunction
  * @param {CompleteRequest} req
- * @param {Response} res
- * @param {NextFunction} [next]
+ * @param {express.Response} res
+ * @param {express.NextFunction} [next]
  * @returns {void}
  */
 

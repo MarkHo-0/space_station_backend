@@ -1,5 +1,5 @@
 import { Pool } from 'mysql2'
-import { commentFromDB, Comment } from '../models/comment.js'
+import { commentFromDB, Comment as CommentModel } from '../models/comment.js'
 
 export class Comment{
 
@@ -13,7 +13,7 @@ export class Comment{
   /**
    * 根據提供提供的編號獲取一則留言
    * @param {int} cid 留言編號 
-   * @return {Promise<Comment>}
+   * @return {Promise<CommentModel>}
    */
   async getOne(cid){
   }
@@ -21,7 +21,7 @@ export class Comment{
   /**
    * 根據提供的編號列表獲取多則留言
    * @param {int[]} cid_array 
-   * @return {Promise<Comment[]>}
+   * @return {Promise<CommentModel[]>}
    */
   async getMany(cid_array){
   }

@@ -1,9 +1,10 @@
 import { Router } from "express";
-const router = Router()
 
-import { authUser, tryAuthUser } from '../middlewares/authUser'
+import { authUser, tryAuthUser } from '../middlewares/authUser.js'
 
 import * as Controller from "../controllers/user.js"
+
+const router = Router()
 
 //獲取用戶資料
 router.get('/:uid', tryAuthUser, Controller.getUserData)
@@ -29,4 +30,4 @@ router.patch('/faculty', authUser, Controller.updateUserFaculty)
 //更改用戶名稱
 router.patch('/nickname', authUser, Controller.updateUserNickname)
 
-module.exports = router;
+export default router;

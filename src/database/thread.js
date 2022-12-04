@@ -1,5 +1,5 @@
 import { Pool } from 'mysql2'
-import { threadFormDB }  from '../models/thread'
+import { threadFormDB }  from '../models/thread.js'
 export class Thread{
 
   /** @type {Pool} @private */
@@ -33,10 +33,10 @@ export class Thread{
    * @param {int} quantity 
    * @param {int} cursor 
    */
-  async getHeatest(quantity, cursor) {
+  async getHeatest(quantity = 5, cursor = 0) {
     //TODO: 完成熱度搜尋資料庫操作
     const [_, threads] = await this.db.promise().execute(
-      `SELECT * FROM thread_heat h INNER JOIN thread t LIMIT ? ORDER BY h.degree DESC`,
+      `SELECT * FROM thread_heat h INNER JOIN thread t LIMIT ? OFFSET ? ORDER BY h.degree DESC`,
       [quantity, cursor]
     )
 

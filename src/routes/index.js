@@ -1,14 +1,15 @@
 import { Router } from "express";
-const router = Router()
 
 import { mountDB } from '../middlewares/mountDB.js'
 import { getDB } from '../database/index.js'
-import { tryAuthUser } from '../middlewares/authUser'
+import { tryAuthUser } from '../middlewares/authUser.js'
 
 import { getHomeData } from '../controllers/home.js'
 
-const ThreadRoutes = require('./thread.js')
-const UserRoutes = require('./user.js')
+import ThreadRoutes from './thread.js'
+import UserRoutes from './user.js'
+
+const router = Router()
 
 //掛載資料庫入口到每個請求上
 router.use(mountDB(getDB))
@@ -18,5 +19,4 @@ router.get('/home', tryAuthUser, getHomeData)
 router.use('/thread', ThreadRoutes)
 router.use('/user', UserRoutes)
 
-
-module.exports = router;
+export default router

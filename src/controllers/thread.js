@@ -1,6 +1,7 @@
-import { RouteFunction } from '../types/express.js'
 import { Thread } from '../models/thread.js';
 import { Comment } from '../models/comment.js';
+
+/** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 const MAX_THREADS_PRE_GET = 15;
 const MAX_COMMENTS_PRE_GET = 15;

@@ -1,31 +1,31 @@
 import { Thread } from './thread.js';
-import { User } from './user';
-import { Comment } from './comment';
-import { News } from './news'
-import { DataBaseModel } from '../types/database.js'
+import { User } from './user.js';
+import { Comment } from './comment.js';
+import { News } from './news.js'
 
-const mysql = require('mysql2')
+import { createPool } from 'mysql2'
 
-/** @type {DataBaseModel} */
+/** @type {import('../types/database.js').DataBaseModel} */
 let db;
 
 //連接資料庫函數
 export async function connect() {
-  const { DB_USER, DB_PWD, DB_HOST, DB_NAME } = process.env
+  const { DB_USER, DB_PWD, DB_HOST, DB_NAME, DB_PORT } = process.env
 
-  if (!DB_USER || !DB_PWD || !DB_HOST) {
+  if (!DB_USER || !DB_PWD || !DB_HOST || !DB_PORT) {
     throw new Error('Cannot find database configuration.')
   }
 
-  const connection = mysql.createPool({
-    host: DB_HOST,
-    user: DB_USER,
-    password: DB_PWD,
-    database: DB_NAME
-  })
-
   try {
-    await connection.connect()
+    const connection = await createPool({
+      host: DB_HOST,
+      port: DB_PORT,
+      user: DB_USER,
+      password: DB_PWD,
+      database: DB_NAME,
+      connectionLimit: 5,
+    })
+
     db = {
       'thread': new Thread(connection),
       'comment': new Comment(connection),

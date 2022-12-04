@@ -1,4 +1,4 @@
-import { RouteFunction } from '../types/express.js'
+/** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 // authUser 為強制身份驗證，tryAuthUser 為自願性身份驗證
 

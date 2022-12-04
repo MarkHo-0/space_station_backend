@@ -1,9 +1,10 @@
 import { Router } from "express";
-const router = Router()
 
-import { authUser, tryAuthUser } from '../middlewares/authUser'
+import { authUser, tryAuthUser } from '../middlewares/authUser.js'
 
 import * as Controller from "../controllers/thread.js"
+
+const router = Router()
 
 //獲取貼文列表
 router.get('/', Controller.getThreads)
@@ -12,9 +13,9 @@ router.get('/', Controller.getThreads)
 router.post('/', authUser, Controller.postThread)
 
 //透過編號獲取指定貼文
-router.get('/:tid', tryAuthUser, Controller.getThreadByID)
+router.get('/:tid', tryAuthUser, Controller.getThread)
 
 //透過關鍵字搜尋貼文
 router.get('/search', Controller.searchThread)
 
-module.exports = router;
+export default router;

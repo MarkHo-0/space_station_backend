@@ -1,4 +1,4 @@
-import { SimpleUser } from "./user"
+import { SimpleUser } from "./user.js"
 
 export class Comment {
     id = -1

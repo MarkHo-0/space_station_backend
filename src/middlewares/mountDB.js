@@ -1,6 +1,6 @@
-export function mountDB(database) {
+export function mountDB(getDatabaseInstanceFunction) {
     return function(req, _, next) {
-        req.db = database
+        req.db = getDatabaseInstanceFunction()
         next()
     }
 }

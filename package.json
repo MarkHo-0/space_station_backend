@@ -16,7 +16,9 @@
     "url": "https://github.com/MarkHo-0/sapce-station_backend/issues"
   },
   "homepage": "https://github.com/MarkHo-0/sapce-station_backend#readme",
+  "type": "module",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mysql2": "^2.3.3"
   },

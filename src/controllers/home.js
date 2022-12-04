@@ -1,6 +1,6 @@
-import {RouteFunction} from '../types/express.js'
-
 const HOME_PAGE_THREADS_COUNT = 5
+
+/** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 /** @type {RouteFunction} */
 export function getHomeData(req, res) {

@@ -1,9 +1,10 @@
 import { Router } from "express";
-const router = Router()
 
 import { authUser, tryAuthUser } from '../middlewares/authUser'
 
 import * as Controller from "../controllers/comment.js"
+
+const router = Router()
 
 //對一則留言點讚或點踩
 router.post('/', authUser, Controller.postComment)

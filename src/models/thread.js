@@ -1,5 +1,5 @@
-import { SimpleUser } from "./user"
-import { Comment } from "./comment"
+import { SimpleUser } from "./user.js"
+import { Comment } from "./comment.js"
 export class Thread {
     id = 0
     title = ''
