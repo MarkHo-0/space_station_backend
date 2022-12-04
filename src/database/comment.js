@@ -1,5 +1,5 @@
 import { Pool } from 'mysql2'
-import { commentFromDB, Comment as CommentModel } from '../models/comment.js'
+import { commentFromDB} from '../models/comment.js'
 
 export class Comment{
 
@@ -10,58 +10,41 @@ export class Comment{
     this.db = connection
   }
 
-  /**
-   * 根據提供提供的編號獲取一則留言
-   * @param {int} cid 留言編號 
-   * @return {Promise<CommentModel>}
-   */
   async getOne(cid){
+    return commentFromDB()
   }
   
-  /**
-   * 根據提供的編號列表獲取多則留言
-   * @param {int[]} cid_array 
-   * @return {Promise<CommentModel[]>}
-   */
   async getMany(cid_array){
+    const comments_raw = []
+    return comments_raw.map( c => commentFromDB(c))
   }
 
-  /**
-   * 對一則留言進行互動
-   * @param {int} cid 留言編號
-   * @param {int} type_id 互動類型編號
-   * @param {int} user_id 互動者編號
-   * @return {Promise<boolean>}
-   */
-  async react(cid, type_id, user_id) {
-
-  }
-  
-  /**
-   * 頂置一則留言
-   * @param {int} cid 留言編號
-   * @return {Promise<boolean>}
-   */
-  async pin(cid){
+  async createReaction(cid, type_id, user_id) {
+    return true
   }
 
-  /**
-   * 去除頂置一則留言
-   * @param {int} cid 留言編號
-   * @return {Promise<boolean>}
-   */
-  async unpin(cid){
+  async updateReaction(cid, type_id, user_id) {
+    return true
+  }
 
+  async removeReaction(cid, user_id) {
+    return true
   }
   
-  /**
-   * 舉報一則留言
-   * @param {int} cid 留言編號
-   * @param {int} reason_id 舉報的原因編號
-   * @param {int} user_id 舉報的用戶編號
-   * @return {Promise<boolean>}
-   */
-  async report(cid, reason_id, user_id){
+  async setPinned(cid, new_cid){
+    return true
+  }
+
+  async removePinned(cid) {
+    return true
+  }
+
+  async updateStatus(cid, new_status_id) {
+    return true
+  }
+  
+  async createReport(cid, reason_id, user_id){
+    return true
   }
 }
 
