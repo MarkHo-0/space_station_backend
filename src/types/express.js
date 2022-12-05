@@ -9,7 +9,7 @@
  * @typedef {Object} ChildType
  * @property {DBModel} db
  * @property {SimpleUser} [user]
- * @typedef {Request & ChildType} CompleteRequest
+ * @typedef {express.Request & ChildType} CompleteRequest
  */
 
 // express 的 route 函數拓展，將原本的 request 替換為上者
