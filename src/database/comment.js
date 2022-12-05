@@ -1,5 +1,5 @@
 import { Pool } from 'mysql2'
-import { commentFromDB} from '/models/commentjs'
+import { commentFromDB } from '../models/comment.js'
 
 export class Comment{
 
@@ -12,12 +12,12 @@ export class Comment{
 
   async getOne(cid){
     const [_, comment] = await this.db.promise().execute(`--sql
-    SELECT 
-    comment_id, content, sender, create_time, 
-    like_count ,dislike_count, reply_to, my_reation
-    WHERE 
-    cid == ?
-    `[cid])
+      SELECT 
+      comment_id, content, sender, create_time, 
+      like_count ,dislike_count, reply_to, my_reation
+      WHERE 
+      cid == ?
+    `, [cid])
 
     return commentFromDB()
   }

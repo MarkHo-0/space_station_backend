@@ -9,22 +9,8 @@ export class Thread{
     this.db = connection
   }
 
-  async getOne(tid, comments_count, cursor) {
-    const [_, fields] = await this.db.promise().execute(`--sql
-    SELECT u.uid, u.nickname, c.like_count, c.dislike_count, c.reply_count, c.content,c.create_time 
-    FROM comments c 
-    INNER JOIN users u ON u.uid = c.sender_uid 
-    ORDER BY
-      h.degree DESC,
-      c.create_time DESC
-      LIMIT ? OFFSET ?`,
-    [tid, comments_count, cursor]
-    )
-
-    if (fields.length == 0) {
-      throw Error('Thread not found!')
-    }
-
+  async getOne(tid) {
+    //TODO: 完成搜索語句
     return threadFormDB(fields[0])
   }
 

@@ -2,6 +2,7 @@
  import { SimpleUser } from '../models/user.js'
 
  /** @typedef {import('./database.js').DataBaseModel} DBModel */
+ /** @typedef {import('./requestTarget.js').RequestTarget} TargetModel */
  
 // express 的 request 拓展，加入了資料庫入口和用戶資料
 
@@ -9,6 +10,7 @@
  * @typedef {Object} ChildType
  * @property {DBModel} db
  * @property {SimpleUser} [user]
+ * @property {TargetModel} target
  * @typedef {express.Request & ChildType} CompleteRequest
  */
 
