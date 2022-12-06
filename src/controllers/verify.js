@@ -50,7 +50,7 @@ export function checkVfCode(req, res) {
   const vf_code = parseInt(req.body['vf_code'])
 
   //檢查學生編號和驗證編號是否合法
-  if (!validateSID(sid) || VerificationCode.isValid(vf_code)) {
+  if (!validateSID(sid) || !VerificationCode.isValid(vf_code)) {
     return res.status(400).send()
   }
 
