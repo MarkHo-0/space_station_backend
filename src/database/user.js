@@ -58,15 +58,23 @@ export class User{
     return true
   }
 
-  async isVerificationDataValid(sid, vf_data) {
+  async getVerificationData(sid) {
+    return {
+      vf_code: 1234,
+      expired: false,
+      is_used: true
+    }
+  }
+
+  async setVerified(sid) {
     return true
   }
 
-  async setVerificationData(sid, vf_data) {
+  async createVerificationData(sid, vf_data, valid_time_mins) {
     return true
   }
 
-  async createVerificationData(sid, vf_data) {
+  async removeVerificationData(sid) {
     return true
   }
 

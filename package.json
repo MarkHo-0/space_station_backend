@@ -20,7 +20,8 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mysql2": "^2.3.3"
+    "mysql2": "^2.3.3",
+    "nodemailer": "^6.8.0"
   },
   "devDependencies": {
     "@types/mysql2": "github:types/mysql2"

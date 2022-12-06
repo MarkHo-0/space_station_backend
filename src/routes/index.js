@@ -8,6 +8,7 @@ import { getHomeData } from '../controllers/home.js'
 
 import ThreadRoutes from './thread.js'
 import UserRoutes from './user.js'
+import VerifyRoutes from './verify.js'
 
 const router = Router()
 
@@ -18,5 +19,6 @@ router.use(mountDB(getDB))
 router.get('/home', tryAuthUser, getHomeData)
 router.use('/thread', ThreadRoutes)
 router.use('/user', UserRoutes)
+router.use('/verify', VerifyRoutes)
 
 export default router

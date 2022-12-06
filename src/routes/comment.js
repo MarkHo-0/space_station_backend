@@ -27,4 +27,4 @@ router.post('/:cid/pin', authUser, Controller.pinOrUnpinComment)
 //舉報一則留言
 router.post('/:cid/report', authUser, Controller.reportComment)
 
-module.exports = router;
+export default router;
