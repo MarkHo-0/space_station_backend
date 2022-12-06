@@ -1,4 +1,3 @@
-import { User, SimpleUser } from '../utils/emailService.js'
 import { sendVfEmail } from '../utils/emailService.js'
 import * as VerificationCode from '../utils/verificationCode.js'
 
@@ -63,7 +62,7 @@ export function checkVfCode(req, res) {
 
     //核對成功，標記為已驗證
     req.db.user.setVerified(sid)
-    res.send({})
+    res.send()
 
   }).catch(_ => res.status(400).send())
 }
