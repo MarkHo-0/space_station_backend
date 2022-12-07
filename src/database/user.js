@@ -19,26 +19,28 @@ export class User{
     return users_raw.map( u => SimpleUser())
   }
 
-  async getInfo(uid) {
+  async getDetailedOne(uid) {
     return UserFromDB()
   }
   
-  async getOneByLoginToken(token) {
-    const [_, fields] = await this.db.promise().execute(`SELECT * FROM user_login_state WHERE token=?`, [token])
+  async decryptToken(token) {
+    const [raw_data, _] = await this.db.promise().execute("SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = ?", [token])
 
-    if (fields.length == 0) {
-      throw new Error('Token Invalid')
+    const token_info = fields[0]
+    if (!token_info) return null
+
+    return {
+      user_id: parseInt(token_info['uid']),
+      expired: token_info['expired'] == 1,
+      login_device: String(token_info['device_name'])
     }
-
-    //TODO: 待完善令牌獲取用戶資料過程
-    return SimpleUserFromDB(fields[0])
   }
 
-  async setLoginToken(uid, token) {
+  async createToken(uid, token, valid_time_days, device_name) {
     return true
   }
 
-  async removeLoginToken(uid, token) {
+  async removeToken(token) {
     return true
   }
 
