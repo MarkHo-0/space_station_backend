@@ -6,7 +6,7 @@ const VF_CODE_VALID_MINUTES = 1
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 /** @type {RouteFunction} */
-export function sendVfCode(req, res) {
+export async function sendVfCode(req, res) {
   const sid = parseInt(req.body['sid'])
 
   //檢查學生編號是否正確
@@ -14,19 +14,22 @@ export function sendVfCode(req, res) {
     return res.status(400).send({ reason_id: VF_ERROR.INVALID_SID })
   }
 
-  //獲取該學生編號的過往驗證資料
+  //獲取該學生的過往驗證資料，如從未驗證過則會跳過下方if
   const oldVfData = await req.db.user.getVerificationData(sid)
+  if (oldVfData)  {
 
-  //檢查是否為註冊用戶，如是則返回錯誤
-  if (oldVfData && oldVfData.is_used)  {
-    return res.status(400).send({ reason_id: VF_ERROR.IS_USER })
-  }
+    //檢查是否已是驗證過的用戶
+    if (oldVfData.used) {
+      return res.status(400).send({ reason_id: VF_ERROR.VERIFIED })
+    }
 
-  //檢查驗證碼是否過期，如是則刪除，如非則返回請求過頻密
-  if (oldVfData.expired) {
+    //檢查上次的驗證碼是否過期
+    if (!oldVfData.expired) {
+      return res.status(400).send({ reason_id: VF_ERROR.TOO_FREQ })
+    }
+
+    //刪除已過期的驗證碼
     await req.db.user.removeVerificationData(sid)
-  } else {
-    return res.status(400).send({ reason_id: VF_ERROR.TOO_FREQ })
   }
 
   //生成隨機驗證碼
@@ -34,7 +37,7 @@ export function sendVfCode(req, res) {
 
   try {
     //發送驗證電郵以及寫入資料庫
-    await sendVfEmail(sid, vf_code)
+    sendVfEmail(sid, vf_code)
     await req.db.user.createVerificationData(sid, vf_code, VF_CODE_VALID_MINUTES)
     res.send()
   } catch (error) {
@@ -44,7 +47,7 @@ export function sendVfCode(req, res) {
 }
 
 /** @type {RouteFunction} */
-export function checkVfCode(req, res) {
+export async function checkVfCode(req, res) {
   const sid = parseInt(req.body['sid'])
   const vf_code = parseInt(req.body['vf_code'])
 
@@ -54,17 +57,16 @@ export function checkVfCode(req, res) {
   }
 
   //獲取該學生編號的過往驗證資料
-  req.db.user.getVerificationData(sid).then(oldVfData => {
-    //檢查驗證碼，包括是否已經使用、是否過期
-    if (oldVfData.is_used || oldVfData.expired || oldVfData.vf_code != vf_code) {
-      return res.status(400).send()
-    }
+  const oldVfData = await req.db.user.getVerificationData(sid)
 
-    //核對成功，標記為已驗證
-    req.db.user.setVerified(sid)
-    res.send()
+  //檢查驗證碼，包括是否已經使用、是否過期
+  if ( !oldVfData || oldVfData.used || oldVfData.expired || oldVfData.vf_code != vf_code) {
+    return res.status(400).send()
+  }
 
-  }).catch(_ => res.status(400).send())
+  //核對成功，標記為已驗證
+  req.db.user.setVerified(sid)
+  res.send()
 }
 
 function validateSID(sid) {
@@ -73,8 +75,8 @@ function validateSID(sid) {
 
 /** @readonly @enum {number} */
 const VF_ERROR = {
-  UNKNOWN = 0,
-  INVALID_SID = 1,
-  IS_USER = 2,
-  TOO_FREQ = 3
+  UNKNOWN: 0,
+  INVALID_SID: 1,
+  VERIFIED: 2,
+  TOO_FREQ: 3
 }

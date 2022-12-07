@@ -59,26 +59,36 @@ export class User{
   }
 
   async getVerificationData(sid) {
+    const [raw_data, _] = await this.db.promise().execute("SELECT `vf_code`, `expired_on` < now() as `expired`, `used` FROM users_vf WHERE sid = ?", [sid])
+    const vf_data = raw_data[0]
+    if (!vf_data) return null
     return {
-      vf_code: 1234,
-      expired: false,
-      is_used: true
+      vf_code: vf_data['vf_code'],
+      expired: vf_data['expired'] == 1,
+      used: vf_data['used'] == 1
     }
   }
 
   async setVerified(sid) {
+    await this.db.promise().execute("UPDATE users_vf SET `used` = 1, `vf_code` = 0 WHERE `sid` = ?", [sid])
     return true
   }
 
-  async createVerificationData(sid, vf_data, valid_time_mins) {
+  async createVerificationData(sid = 0, vf_data = 0, valid_time_mins = 0) {
+    const currTime = new Date()
+    const expired_time = Math.floor(currTime.setMinutes(currTime.getMinutes() + valid_time_mins) / 1000)
+    await this.db.promise().execute("INSERT INTO users_vf (`vf_code`, `sid`, `expired_on`) VALUES (?, ?, FROM_UNIXTIME(?))", 
+      [vf_data, sid, expired_time])
+
     return true
   }
 
   async removeVerificationData(sid) {
+    await this.db.promise().execute("DELETE FROM users_vf WHERE `sid` = ?", [sid])
     return true
   }
 
-  async setBannedStatus(uid, type_id, expired_on) {
+  async setBannedStatus(uid, type_id, valid_time_hours) {
     return true
   }
 

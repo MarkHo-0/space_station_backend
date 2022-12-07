@@ -19,6 +19,6 @@ router.use(mountDB(getDB))
 router.get('/home', tryAuthUser, getHomeData)
 router.use('/thread', ThreadRoutes)
 router.use('/user', UserRoutes)
-router.use('/verify', VerifyRoutes)
+router.use('/vfcode', VerifyRoutes)
 
 export default router

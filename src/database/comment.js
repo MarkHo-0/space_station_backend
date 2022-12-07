@@ -7,7 +7,7 @@ export class Comment{
   db = null
 
   constructor(connection) {
-    db = connection
+    this.db = connection
   }
 
   async getOne(cid){
@@ -24,10 +24,11 @@ export class Comment{
   
   async getMany(cid_array){
     const arr_str = cid_array.join(" ");
-    const [_, comment] = await this.db.promise().execute(`--sql
-    SELECT * FROM comment WHERE cid IN [?]
-    const comments_raw = []`)
-    return comments_rawmap( c => commentFromDB(c))
+    const [_, comments_raw] = await this.db.promise().execute(`--sql
+      SELECT * FROM comment WHERE cid IN [?]
+    `, [arr_str])
+
+    return comments_raw.map( c => commentFromDB(c))
   }
 
   async createReaction(cid, type_id, user_id) {
