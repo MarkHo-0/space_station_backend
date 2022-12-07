@@ -8,7 +8,7 @@ export async function authUser(req, res, next) {
 
     //若無附帶令牌則返回 401 錯誤
     if (!token) {
-      return res.status(401).send(TOKEN_ERR.MISSING)
+      return res.status(401).send()
     }
 
     //解密令牌
@@ -16,13 +16,13 @@ export async function authUser(req, res, next) {
 
     //如無法獲取則表示令牌無效
     if (!token_info) {
-      return res.status(401).send(TOKEN_ERR.INVALID)
+      return res.status(401).send()
     }
 
     //如令牌過期則刪除並且返回錯誤
     if (token_info.expired) {
       req.db.user.removeLoginToken(token)
-      return res.status(401).send(TOKEN_ERR.EXPIRED)
+      return res.status(401).send()
     }
     
     //透過用戶編號獲取用戶資料
@@ -30,7 +30,7 @@ export async function authUser(req, res, next) {
       //將資料掛載在 req 對象上，讓後方路由可獲取使用
       req.user = user
       next()
-    }).catch( res.status(401).send(TOKEN_ERR.NO_OWNER) )
+    }).catch( res.status(401).send() )
 }
 
 /** @type {RouteFunction} */
@@ -51,13 +51,4 @@ export async function tryAuthUser(req, _, next) {
         .then( user => req.user = user)
         .catch(null)
         .finally( () => next() )
-}
-
-/** @readonly @enum {number} */
-const TOKEN_ERR = {
-  UNKNOWN: 0,
-  MISSING: 1,
-  INVALID: 2,
-  EXPIRED: 3,
-  NO_OWNER: 4
 }
