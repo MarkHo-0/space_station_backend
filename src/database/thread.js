@@ -1,5 +1,5 @@
 import { Pool } from 'mysql2'
-import { threadFormDB }  from '../models/thread.js'
+import { threadFormDB, Thread as ThreadModel }  from '../models/thread.js'
 export class Thread{
 
   /** @type {Pool} @private */
@@ -15,78 +15,54 @@ export class Thread{
   }
 
   /**
-   * 獲取指定數量的熱門貼文
-   * @param {int} quantity 
-   * @param {int} cursor 
+   * 獲取多則貼文資料
+   * @param {number[]} tid_array 
+   * @returns {Promise<Array<ThreadModel>}
    */
-  async getHeatest(quantity = 5, cursor = 0) {
-    //TODO: 完成熱度搜尋資料庫操作
-    const [_, threads] = await this.db.promise().execute(
-      `SELECT * FROM thread_heat h INNER JOIN thread t LIMIT ? OFFSET ? ORDER BY h.degree DESC`,
-      [quantity, cursor]
+  async getMany(tid_array = []) {
+    if (tid_array.length < 1) return []
+
+    const [raw_threads, _] = await this.db.promise().query("SELECT t.tid, t.pid, t.fid, t.title, t.create_time, t.last_update_time, t.content_cid, u.uid, u.nickname, t.comment_count, c.like_count, c.dislike_count, t.pined_cid, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid IN (?) ORDER BY FIELD(t.tid, ?)",
+      [tid_array, tid_array]
     )
 
-    return threads.map( t => threadFormDB(t) )
+    return raw_threads.map(t => threadFormDB(t))
   }
 
-  async getHeatestWithParams(page_id, faculty_id, quantity, cursor) {
-    const [_, threads] = await this.db.promise().execute(`--sql
-      SELECT
-        t.tid, t.title, t.create_time, t.last_update_time, t.pid, t.fid,
-        u.uid, u.nickname, c.like_count, c.dislike_count,
-        (SELECT COUNT(cc.tid) - 1 FROM comments cc WHERE cc.tid = t.tid) as 'reply_count',
-        (SELECT IF(t.pined_cid IS NULL, 0, 1)) as 'has_pinned_reply'
-      FROM 
-        threads_heat h
-        INNER JOIN threads t ON t.tid = h.tid
-        INNER JOIN users u ON u.uid = t.sender_uid 
-        INNER JOIN comments c ON c.cid = t.content_cid 
-      WHERE
-        t.pid = ? AND t.fid = ? AND c.status < 3
-      ORDER BY 
-        h.degree DESC,
-        t.last_update_time DESC
-      LIMIT ? OFFSET ?`,
-      [page_id, faculty_id, quantity, cursor]
+  /**
+   * 獲取N則熱門貼文的編號
+   * @param {number | null} page_id 
+   * @param {number | null} faculty_id 
+   * @param {number} quantity 
+   * @param {number} cursor 
+   * @returns {Promise<number[]>}
+   */
+  async getHeatestIndexes(page_id, faculty_id, quantity, cursor) {
+    const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
+
+    const [indexes, _] = await this.db.promise().execute(`SELECT h.tid FROM threads_heat h INNER JOIN threads t ON h.tid = t.tid INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY h.degree DESC, t.last_update_time DESC LIMIT ? OFFSET ?`,
+      [quantity.toString(), cursor.toString()]
     )
 
-    if (threads.length == 0) {
-      return []
-    }
-
-    return threads.map( t => threadFormDB(t) )
+    return indexes.map(i => parseInt(i.tid))
   }
 
-  async getNewest(quantity, cursor) {
-    const [_, threads] = await this.db.promise().execute(`--sql
-        SELECT
-          t.tid, t.pid, t.fid, t.title, t.create_time, t.last_update_time,
-          u.uid, u.nickname, c.like_count, c.dislike_count,
-          (SELECT COUNT(*) - 1 FROM comments WHERE comments.tid = t.tid) as 'reply_count',
-          (SELECT IF(t.pined_cid IS NULL, 0, 1)) as 'has_pinned_reply'
-        FROM
-          threads t
-          INNER JOIN users u ON u.uid = t.sender_uid
-          INNER JOIN comments c on c.cid = t.content_cid
-        WHERE
-          c.status < 3
-        ORDER BY t.last_update_time DESC
-        LIMIT ? OFFSET ?`,
-      [quantity, cursor]
+  /**
+   * 獲取N則最新貼文的編號
+   * @param {number | null} page_id 
+   * @param {number | null} faculty_id 
+   * @param {number} quantity 
+   * @param {number} cursor 
+   * @returns {Promise<number[]>}
+   */
+  async getNewestIndexes(page_id, faculty_id, quantity, cursor) {
+    const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
+
+    const [indexes, _] = await this.db.promise().execute(`SELECT t.tid FROM threads t INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY t.last_update_time DESC LIMIT ? OFFSET ?`,
+      [quantity.toString(), cursor.toString()]
     )
 
-    if (threads.length == 0) {
-      return []
-    }
-
-    return threads.map( t => threadFormDB(t) )
-  }
-
-  async getNewestWithParams(page_id, faculty_id, quantity, cursor) {
-    //TODO: 完成時間搜尋資料庫操作
-    const threads = []
-
-    return threads.map( t => threadFormDB(t) )
+    return indexes.map(i => parseInt(i.tid))
   }
 
   async search(query_text, cursor) {
@@ -101,6 +77,24 @@ export class Thread{
 
     return true
   }
+}
+
+/**
+ * @param {number | null} page_id 
+ * @param {number | null} faculty_id 
+ * @param {"normal" | "blocked" | "all"} visibility 
+ * @returns {String}
+ */
+function getSqlFilterCode(page_id, faculty_id, visibility) {
+  let conditions = []
+
+  if (page_id) conditions.push("AND t.pid = " + page_id)
+  if (faculty_id) conditions.push("AND t.fid = " + faculty_id)
+
+  if (visibility == 'normal') conditions.push("c.status < 3")
+  if (visibility == 'blocked') conditions.push("c.status > 2")
+
+  return conditions.length ? " WHERE "+ conditions.join(" AND ") : ""
 }
 
 
