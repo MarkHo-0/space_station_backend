@@ -61,7 +61,7 @@ export class User{
   }
 
   async getVerificationData(sid) {
-    const [raw_data, _] = await this.db.promise().execute("SELECT `vf_code`, `expired_on` < now() as `expired`, `used` FROM users_vf WHERE sid = ?", [sid])
+    const [raw_data, _] = await this.db.promise().execute("SELECT `vf_code`, `expired_on` < NOW() AS `expired`, `used` FROM users_vf WHERE `sid` = ?", [sid])
     const vf_data = raw_data[0]
     if (!vf_data) return null
     return {
@@ -76,11 +76,9 @@ export class User{
     return true
   }
 
-  async createVerificationData(sid = 0, vf_data = 0, valid_time_mins = 0) {
-    const currTime = new Date()
-    const expired_time = Math.floor(currTime.setMinutes(currTime.getMinutes() + valid_time_mins) / 1000)
-    await this.db.promise().execute("INSERT INTO users_vf (`vf_code`, `sid`, `expired_on`) VALUES (?, ?, FROM_UNIXTIME(?))", 
-      [vf_data, sid, expired_time])
+  async createVerificationData(sid = 0, vf_data = 0, valid_time_mins = 1) {
+    await this.db.promise().execute("INSERT INTO users_vf (`vf_code`, `sid`, `expired_on`) VALUES (?, ?, ADDDATE(NOW(), INTERVAL ? MINUTE))", 
+      [vf_data, sid, valid_time_mins])
 
     return true
   }
