@@ -21,6 +21,13 @@ export class User{
   async getDetailedOne(uid) {
     return UserFromDB()
   }
+
+  async toUserID(sid) {
+    const [raw_sid, _] = await this.db.execute("SELECT `uid` FROM users_info WHERE `sid` = ?", [sid])
+
+    if(!raw_sid.length) return null
+    return parseInt(raw_sid[0]['uid'])
+  }
   
   async decryptToken(token) {
     const [raw_data, _] = await this.db.execute("SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = ?", [token])
@@ -47,7 +54,16 @@ export class User{
     return true
   }
 
+  async createOne(sid, nickname, pwd) {
+    const [_, __] = await this.db.query(
+      "INSERT INTO users (`nickname`) VALUES (?);" +
+      "INSERT INTO users_info (`uid`, `sid`, `fid`) VALUES (LAST_INSERT_ID(), ?, null);" +
+      "INSERT INTO users_pwd (`sid`, `hashed_pwd`) VALUES ((SELECT `sid` FROM users_info WHERE `uid` = LAST_INSERT_ID()), UNHEX(?));"
+      , [nickname, sid, pwd]
+    )
 
+    return true
+  }
 
   async updateNickname(uid, newName) {
     return true
