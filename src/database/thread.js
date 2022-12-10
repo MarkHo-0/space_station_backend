@@ -38,8 +38,8 @@ export class Thread{
    */
   async getHeatestIndexes(page_id, faculty_id, quantity, cursor) {
     const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
-
-    const [indexes, _] = await this.db.execute(`SELECT h.tid FROM threads_heat h INNER JOIN threads t ON h.tid = t.tid INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY h.degree DESC, t.last_update_time DESC LIMIT ? OFFSET ?`,
+    const [indexes, _] = await this.db.execute(
+      `SELECT h.tid FROM threads_heat h INNER JOIN threads t ON h.tid = t.tid INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY h.degree DESC, t.last_update_time DESC LIMIT ? OFFSET ?`,
       [quantity.toString(), cursor.toString()]
     )
 
@@ -57,7 +57,8 @@ export class Thread{
   async getNewestIndexes(page_id, faculty_id, quantity, cursor) {
     const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
 
-    const [indexes, _] = await this.db.execute(`SELECT t.tid FROM threads t INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY t.last_update_time DESC LIMIT ? OFFSET ?`,
+    const [indexes, _] = await this.db.execute(
+      `SELECT t.tid FROM threads t INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY t.last_update_time DESC LIMIT ? OFFSET ?`,
       [quantity.toString(), cursor.toString()]
     )
 
