@@ -33,8 +33,7 @@ export class Thread {
     }
 }
 
-export function threadFormDB(d) {
-  console.log(d)    
+export function threadFormDB(d) {  
   return new Thread({
     id: d['tid'],
     pid: d['pid'],
