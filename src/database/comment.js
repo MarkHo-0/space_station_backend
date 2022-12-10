@@ -1,9 +1,8 @@
-import { Pool } from 'mysql2'
 import { commentFromDB } from '../models/comment.js'
 
 export class Comment{
 
-  /** @type {Pool} @private */
+  /** @type {import('mysql2/promise').Pool} @private */
   db = null
 
   constructor(connection) {
@@ -11,7 +10,7 @@ export class Comment{
   }
 
   async getOne(cid){
-    const [_, comment] = await this.db.promise().execute(`--sql
+    const [_, comment] = await this.db.execute(`--sql
       SELECT 
       comment_id, content, sender, create_time, 
       like_count ,dislike_count, reply_to, my_reation
@@ -24,7 +23,7 @@ export class Comment{
   
   async getMany(cid_array){
     const arr_str = cid_array.join(" ");
-    const [_, comments_raw] = await this.db.promise().execute(`--sql
+    const [_, comments_raw] = await this.db.execute(`--sql
       SELECT * FROM comment WHERE cid IN [?]
     `, [arr_str])
 
@@ -32,7 +31,7 @@ export class Comment{
   }
 
   async createReaction(cid, type_id, user_id) {
-    const [_, comment_reaction] =await this.db.promise().execute(`--sql
+    const [_, comment_reaction] =await this.db.execute(`--sql
     INSERT into comment_reaction 
     ( 'cid', uid, type)
     `,[cid, type_id, user_id])
@@ -41,7 +40,7 @@ export class Comment{
   }
 
   async updateReaction(cid, type_id, user_id) {
-    const [_, comment_reaction] = await this.db.promise().execute(`--sql
+    const [_, comment_reaction] = await this.db.execute(`--sql
     UPDATE comment 
     SET like_count = like_count + 1
     SET dislike_count = dislike_count + 1
@@ -53,7 +52,7 @@ export class Comment{
   }
 
   async removeReaction(cid, user_id) {
-    const [_, comment_reaction] = await this.db.promise().execute(`--sql
+    const [_, comment_reaction] = await this.db.execute(`--sql
     UPDATE comment 
     SET like_count = like_count - 1
     SET dislike_count = dislike_count - 1

@@ -1,9 +1,8 @@
-import { Pool } from 'mysql2'
 import { UserFromDB, SimpleUserFromDB } from '../models/user.js'
     
 export class User{
 
-  /** @type {Pool} @private */
+  /** @type {import('mysql2/promise').Pool} @private */
   db = null
 
   constructor(db) {
@@ -24,7 +23,7 @@ export class User{
   }
   
   async decryptToken(token) {
-    const [raw_data, _] = await this.db.promise().execute("SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = ?", [token])
+    const [raw_data, _] = await this.db.execute("SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = ?", [token])
 
     const token_info = fields[0]
     if (!token_info) return null
@@ -48,9 +47,7 @@ export class User{
     return true
   }
 
-  async createOne(user_data) {
-    return 0 //更換為用戶編號
-  }
+
 
   async updateNickname(uid, newName) {
     return true
@@ -61,7 +58,7 @@ export class User{
   }
 
   async getVerificationData(sid) {
-    const [raw_data, _] = await this.db.promise().execute("SELECT `vf_code`, `expired_on` < NOW() AS `expired`, `used` FROM users_vf WHERE `sid` = ?", [sid])
+    const [raw_data, _] = await this.db.execute("SELECT `vf_code`, `expired_on` < NOW() AS `expired`, `used` FROM users_vf WHERE `sid` = ?", [sid])
     const vf_data = raw_data[0]
     if (!vf_data) return null
     return {
@@ -72,19 +69,19 @@ export class User{
   }
 
   async setVerified(sid) {
-    await this.db.promise().execute("UPDATE users_vf SET `used` = 1, `vf_code` = 0 WHERE `sid` = ?", [sid])
+    await this.db.execute("UPDATE users_vf SET `used` = 1, `vf_code` = 0 WHERE `sid` = ?", [sid])
     return true
   }
 
   async createVerificationData(sid = 0, vf_data = 0, valid_time_mins = 1) {
-    await this.db.promise().execute("INSERT INTO users_vf (`vf_code`, `sid`, `expired_on`) VALUES (?, ?, ADDDATE(NOW(), INTERVAL ? MINUTE))", 
+    await this.db.execute("INSERT INTO users_vf (`vf_code`, `sid`, `expired_on`) VALUES (?, ?, ADDDATE(NOW(), INTERVAL ? MINUTE))", 
       [vf_data, sid, valid_time_mins])
 
     return true
   }
 
   async removeVerificationData(sid) {
-    await this.db.promise().execute("DELETE FROM users_vf WHERE `sid` = ?", [sid])
+    await this.db.execute("DELETE FROM users_vf WHERE `sid` = ?", [sid])
     return true
   }
 

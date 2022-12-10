@@ -1,8 +1,7 @@
-import { Pool } from 'mysql2'
 import { threadFormDB, Thread as ThreadModel }  from '../models/thread.js'
 export class Thread{
 
-  /** @type {Pool} @private */
+  /** @type {import('mysql2/promise').Pool} @private */
   db = null
 
   constructor(connection) {
@@ -22,7 +21,7 @@ export class Thread{
   async getMany(tid_array = []) {
     if (tid_array.length < 1) return []
 
-    const [raw_threads, _] = await this.db.promise().query("SELECT t.tid, t.pid, t.fid, t.title, t.create_time, t.last_update_time, t.content_cid, u.uid, u.nickname, t.comment_count, c.like_count, c.dislike_count, t.pined_cid, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid IN (?) ORDER BY FIELD(t.tid, ?)",
+    const [raw_threads, _] = await this.db.query("SELECT t.tid, t.pid, t.fid, t.title, t.create_time, t.last_update_time, t.content_cid, u.uid, u.nickname, t.comment_count, c.like_count, c.dislike_count, t.pined_cid, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid IN (?) ORDER BY FIELD(t.tid, ?)",
       [tid_array, tid_array]
     )
 
@@ -40,7 +39,7 @@ export class Thread{
   async getHeatestIndexes(page_id, faculty_id, quantity, cursor) {
     const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
 
-    const [indexes, _] = await this.db.promise().execute(`SELECT h.tid FROM threads_heat h INNER JOIN threads t ON h.tid = t.tid INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY h.degree DESC, t.last_update_time DESC LIMIT ? OFFSET ?`,
+    const [indexes, _] = await this.db.execute(`SELECT h.tid FROM threads_heat h INNER JOIN threads t ON h.tid = t.tid INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY h.degree DESC, t.last_update_time DESC LIMIT ? OFFSET ?`,
       [quantity.toString(), cursor.toString()]
     )
 
@@ -58,7 +57,7 @@ export class Thread{
   async getNewestIndexes(page_id, faculty_id, quantity, cursor) {
     const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
 
-    const [indexes, _] = await this.db.promise().execute(`SELECT t.tid FROM threads t INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY t.last_update_time DESC LIMIT ? OFFSET ?`,
+    const [indexes, _] = await this.db.execute(`SELECT t.tid FROM threads t INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY t.last_update_time DESC LIMIT ? OFFSET ?`,
       [quantity.toString(), cursor.toString()]
     )
 

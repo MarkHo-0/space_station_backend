@@ -3,7 +3,7 @@ import { User } from './user.js';
 import { Comment } from './comment.js';
 import { News } from './news.js'
 
-import { createPool } from 'mysql2'
+import { createPool } from 'mysql2/promise'
 
 /** @type {import('../types/database.js').DataBaseModel} */
 let db;
@@ -24,6 +24,7 @@ export async function connect() {
       password: DB_PWD,
       database: DB_NAME,
       connectionLimit: 5,
+      multipleStatements: true
     })
 
     db = {

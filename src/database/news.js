@@ -1,9 +1,8 @@
-import { Pool } from 'mysql2'
 import { jsDate2unixTime } from '../utils/parseTime.js'
 
 export class News{
 
-    /** @type {Pool} @private */
+    /** @type {import('mysql2/promise').Pool} @private */
     db = null
 
     constructor(connection) {
@@ -11,7 +10,7 @@ export class News{
     }
 
     async getMany(quantity, cursor) {
-        const [raw_news, _] = await this.db.promise().query(
+        const [raw_news, _] = await this.db.query(
           "SELECT * FROM `school_news` WHERE public_time < NOW() AND discard_time > NOW() ORDER BY public_time DESC LIMIT ? OFFSET ?", 
           [quantity, cursor]
         )
