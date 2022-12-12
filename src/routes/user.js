@@ -13,7 +13,7 @@ router.get('/:uid', tryAuthUser, Controller.getUserData)
 router.get('/:uid/thread', Controller.getUserThreads)
 
 //獲取用戶賬號狀態
-router.get('/:sid/state', Controller.getUserState)
+router.get('/state/:sid', Controller.getUserState)
 
 //用戶註冊
 router.post('/register', Controller.userRegister)

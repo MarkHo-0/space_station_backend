@@ -1,5 +1,5 @@
 import { User, SimpleUser } from '../models/user.js'
-import { validateRegisterData, validLoginData } from '../utils/dataValidation.js'
+import { validateRegisterData, validateSID, validLoginData } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
@@ -17,8 +17,25 @@ export function getUserThreads(req, res) {
 }
 
 /** @type {RouteFunction} */
-export function getUserState(req, res) {
+export async function getUserState(req, res) {
+  //檢查學生編號是否合法
+  const sid = validateSID(req.params['sid'])
+  if (!sid) return res.status(400).send()
 
+  //透過學生編號獲取用戶訊息
+  const user = await req.db.user.getOneBySID(sid)
+
+  //若果無法找到用戶則搜尋驗證列表
+  //如果找到則刪除該驗證訊息，需要用戶重新驗證
+  if (!user) {
+    const vfData = await req.db.user.getVerificationData(sid)
+    if (vfData) await req.db.user.removeVerificationData(sid)
+    return res.send({sid_state: USER_STATE.NOT_EXIST})
+  }
+
+  //TODO: 等待完成用戶權限功能後，再添加禁止登入檢查
+
+  res.send({sid_state: USER_STATE.NORMAL})
 }
 
 /** @type {RouteFunction} */
@@ -86,4 +103,12 @@ export function updateUserFaculty(req, res) {
 /** @type {RouteFunction} */
 export function updateUserNickname(req, res) {
 
+}
+
+
+/** @readonly @enum {number} */
+const USER_STATE = {
+  NOT_EXIST: 0,
+  NORMAL: 1,
+  BANNED: 2,
 }

@@ -21,12 +21,14 @@ export function validateNickname(nickname = '') {
 }
 
 export function validateSID(sid = 0) {
+  if (typeof sid == 'string') sid = parseInt(sid)
   if (!Number.isInteger(sid)) return null
   if (sid < 10000000 || sid > 40000000) return null
   return sid
 }
 
 export function validateUID(uid = 0) {
+  if (typeof uid == 'string') uid = parseInt(uid)
   if (!Number.isInteger(uid)) return null
   if (uid < 1) return null
   return uid
