@@ -5,12 +5,11 @@
 /** @type {RouteFunction} */
 export async function authUser(req, res, next) {
   //若無附帶令牌則返回 401 錯誤
-  const token = req.header['Authorization']
+  const token = req.headers.authorization
   if (!token) return res.status(401).send()
 
   //解密令牌
   const token_info = await req.db.user.decryptToken(token)
-
   //如無法獲取則表示令牌無效
   if (!token_info) {
     return res.status(401).send()
@@ -34,7 +33,7 @@ export async function authUser(req, res, next) {
 /** @type {RouteFunction} */
 export async function tryAuthUser(req, _, next) {
   //若無附帶令牌則直接略過身份驗證
-  const token = req.header['Authorization']
+  const token = req.headers.authorization
   if (!token) return next()
 
   //解密令牌
