@@ -1,5 +1,5 @@
+import { validateSID, validateVerificationCode } from '../utils/dataValidation.js'
 import { sendVfEmail } from '../utils/emailService.js'
-import * as VerificationCode from '../utils/verificationCode.js'
 
 const VF_CODE_VALID_MINUTES = 1
 
@@ -7,12 +7,9 @@ const VF_CODE_VALID_MINUTES = 1
 
 /** @type {RouteFunction} */
 export async function sendVfCode(req, res) {
-  const sid = parseInt(req.body['sid'])
-
-  //檢查學生編號是否正確
-  if (!validateSID(sid)) {
-    return res.status(400).send({ reason_id: VF_ERROR.INVALID_SID })
-  }
+  //檢查學生編號是否合法
+  const sid = validateSID(req.body['sid'])
+  if (!sid) return res.status(400).send({ reason_id: VF_ERROR.INVALID_SID })
 
   //獲取該學生的過往驗證資料，如從未驗證過則會跳過下方if
   const oldVfData = await req.db.user.getVerificationData(sid)
@@ -33,7 +30,7 @@ export async function sendVfCode(req, res) {
   }
 
   //生成隨機驗證碼
-  const vf_code = VerificationCode.generate()
+  const vf_code = generateVerificationCode()
 
   try {
     //發送驗證電郵以及寫入資料庫
@@ -48,13 +45,10 @@ export async function sendVfCode(req, res) {
 
 /** @type {RouteFunction} */
 export async function checkVfCode(req, res) {
-  const sid = parseInt(req.body['sid'])
-  const vf_code = parseInt(req.body['vf_code'])
-
   //檢查學生編號和驗證編號是否合法
-  if (!validateSID(sid) || !VerificationCode.isValid(vf_code)) {
-    return res.status(400).send()
-  }
+  const sid = validateSID(req.body['sid'])
+  const vf_code = validateVerificationCode(req.body['vf_code'])
+  if (!sid || !vf_code) return res.status(400).send()
 
   //獲取該學生編號的過往驗證資料
   const oldVfData = await req.db.user.getVerificationData(sid)
@@ -69,8 +63,8 @@ export async function checkVfCode(req, res) {
   res.send()
 }
 
-function validateSID(sid) {
-  return Number.isInteger(sid) && sid > 20000000 && sid.toString().length == 8
+function generateVerificationCode() {
+  return Math.floor(1000 + Math.random() * 9000)
 }
 
 /** @readonly @enum {number} */
