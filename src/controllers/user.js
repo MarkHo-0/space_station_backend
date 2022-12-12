@@ -73,7 +73,9 @@ export async function userLogin(req, res) {
 
 /** @type {RouteFunction} */
 export function userLogout(req, res) {
-
+  req.db.user.removeLoginState(req.headers.authorization)
+    .then(_ => res.send())
+    .catch(_ => res.status(400).send())
 }
 
 /** @type {RouteFunction} */

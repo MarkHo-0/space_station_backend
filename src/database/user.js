@@ -10,9 +10,9 @@ export class User{
   }
 
   async getOneByUID(uid) {
-    const [raw_user, _] = await this.db.execute("SELECT `uid`, `nickname` FROM users WHERE `uid` = ?", [sid])
+    const [raw_user, _] = await this.db.execute("SELECT `uid`, `nickname` FROM users WHERE `uid` = ?", [uid])
 
-    if (raw_data.length !== 1) return null
+    if (raw_user.length !== 1) return null
     return SimpleUserFromDB(raw_user[0])
   }
 
@@ -22,7 +22,7 @@ export class User{
       [sid]
     )
 
-    if (raw_data.length !== 1) return null
+    if (raw_user.length !== 1) return null
     return SimpleUserFromDB(raw_user[0])
   }
 
@@ -32,11 +32,11 @@ export class User{
   
   async decryptToken(token) {
     const [raw_data, _] = await this.db.execute(
-      "SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = ?",
+      "SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = UNHEX(?)",
       [token]
     )
 
-    const token_info = fields[0]
+    const token_info = raw_data[0]
     if (!token_info) return null
 
     return {
@@ -55,6 +55,7 @@ export class User{
   }
 
   async removeLoginState(token) {
+    await this.db.execute("DELETE FROM users_login_info WHERE `token` = UNHEX(?)", [token])
     return true
   }
 
