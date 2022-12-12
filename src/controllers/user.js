@@ -47,7 +47,7 @@ export async function userRegister(req, res) {
   }
 
   //檢查用戶是否曾經已註冊
-  if (Number.isInteger(await req.db.user.getOneBySID(sid))) {
+  if (await req.db.user.getOneBySID(sid)) {
     return res.status(400).send('User already registered.')
   }
 
