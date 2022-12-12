@@ -33,6 +33,6 @@ export function validateHashedPassword(pwd = '') {
 
 export function validateVerificationCode(vf_code = 0) {
   if (!Number.isInteger(vf_code)) return null
-  if (vf_code < 1000 && vf_code > 9999) return null
+  if (vf_code < 1000 || vf_code > 9999) return null
   return vf_code
 }
