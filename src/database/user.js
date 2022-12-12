@@ -9,28 +9,32 @@ export class User{
     this.db = db
   }
 
-  async getOne(uid) {
-    return SimpleUserFromDB()
+  async getOneByUID(uid) {
+    const [raw_user, _] = await this.db.execute("SELECT `uid`, `nickname` FROM users WHERE `uid` = ?", [sid])
+
+    if (raw_data.length !== 1) return null
+    return SimpleUserFromDB(raw_user[0])
   }
 
-  async getMany(uid_array) {
-    const users_raw = []
-    return users_raw.map( u => SimpleUser())
+  async getOneBySID(sid) {
+    const [raw_user, _] = await this.db.execute(
+      "SELECT `uid`, `nickname` FROM users WHERE `uid` = (SELECT `uid` FROM users_info WHERE `sid` = ?)",
+      [sid]
+    )
+
+    if (raw_data.length !== 1) return null
+    return SimpleUserFromDB(raw_user[0])
   }
 
   async getDetailedOne(uid) {
     return UserFromDB()
   }
-
-  async toUserID(sid) {
-    const [raw_sid, _] = await this.db.execute("SELECT `uid` FROM users_info WHERE `sid` = ?", [sid])
-
-    if(!raw_sid.length) return null
-    return parseInt(raw_sid[0]['uid'])
-  }
   
   async decryptToken(token) {
-    const [raw_data, _] = await this.db.execute("SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = ?", [token])
+    const [raw_data, _] = await this.db.execute(
+      "SELECT `uid`, `expire_on` < now() as `expired`, `device_name` FROM users_login_info WHERE `token` = ?",
+      [token]
+    )
 
     const token_info = fields[0]
     if (!token_info) return null
@@ -42,16 +46,21 @@ export class User{
     }
   }
 
-  async createToken(uid, token, valid_time_days, device_name) {
+  async createLoginState(uid, token, valid_time_days, device_name) {
+    await this.db.execute(
+      "INSERT INTO users_login_info (`token`, `uid`, `expire_on`, `device_name`) VALUES (UNHEX(?), ?, ADDDATE(NOW(), INTERVAL ? DAY), ?)",
+      [token, uid, valid_time_days, device_name]
+    )
     return true
   }
 
-  async removeToken(token) {
+  async removeLoginState(token) {
     return true
   }
 
-  async hasUidAndPwd(uid, pwd) {
-    return true
+  async isSidAndPwdMatched(sid, pwd) {
+    const [raw_data, _] = await this.db.execute("SELECT `sid` FROM users_pwd WHERE `sid` = ? AND `hashed_pwd` = UNHEX(?)", [sid, pwd])
+    return raw_data.length == 1
   }
 
   async createOne(sid, nickname, pwd) {

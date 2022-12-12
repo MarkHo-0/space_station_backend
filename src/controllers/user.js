@@ -1,7 +1,10 @@
 import { User, SimpleUser } from '../models/user.js'
-import { validateRegisterData } from '../utils/dataValidation.js'
+import { validateRegisterData, validLoginData } from '../utils/dataValidation.js'
+import { generateToken } from '../utils/loginToken.js'
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
+
+const TOKEN_VALID_DAYS = 182
 
 /** @type {RouteFunction} */
 export function getUserData(req, res) {
@@ -27,7 +30,7 @@ export async function userRegister(req, res) {
   }
 
   //檢查用戶是否曾經已註冊
-  if (Number.isInteger(await req.db.user.toUserID(sid))) {
+  if (Number.isInteger(await req.db.user.getOneBySID(sid))) {
     return res.status(400).send('User already registered.')
   }
 
@@ -44,8 +47,28 @@ export async function userRegister(req, res) {
 }
 
 /** @type {RouteFunction} */
-export function userLogin(req, res) {
+export async function userLogin(req, res) {
+  //校驗資料是否正確
+  const { sid, pwd, device_name } = validLoginData(req.body)
+  if (!sid || !pwd) return res.status(401).send()
 
+  //驗證學生編號和密碼是否正確
+  if(await req.db.user.isSidAndPwdMatched(sid, pwd) == false){
+    return res.status(401).send()
+  }
+
+  //獲取用戶資料以及生成令牌
+  const user = await req.db.user.getOneBySID(sid)
+  const token = generateToken(sid)
+
+  //將令牌資料寫入資料庫，成功後返回用戶相關訊息
+  req.db.user.createLoginState(user.user_id, token, TOKEN_VALID_DAYS, device_name).then(_ => 
+    res.send({
+      "token": token,
+      "valid_time": TOKEN_VALID_DAYS,
+      "user": user.toJSON()
+    })
+  ).catch(_ => res.status(400).send())
 }
 
 /** @type {RouteFunction} */

@@ -6,6 +6,14 @@ export function validateRegisterData({sid, nickname, pwd}) {
   }
 }
 
+export function validLoginData({sid, pwd, device_name}) {
+  return {
+    "sid" : validateSID(sid),
+    "pwd": validateHashedPassword(pwd),
+    "device_name": validateDeviceName(device_name)
+  }
+}
+
 export function validateNickname(nickname = '') {
   if (typeof nickname !== 'string') return null
   if (nickname.length < 2 || nickname.length > 10) return null
@@ -29,6 +37,12 @@ export function validateHashedPassword(pwd = '') {
   if (typeof pwd !== 'string') return null
   if (pwd_checker.test(pwd) == false) return null
   return pwd
+}
+
+export function validateDeviceName(name = '') {
+  if (typeof name !== 'string') return null
+  if (name.length > 20) return null
+  return name
 }
 
 export function validateVerificationCode(vf_code = 0) {
