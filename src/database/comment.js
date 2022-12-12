@@ -62,20 +62,46 @@ export class Comment{
   }
   
   async setPinned(cid, new_cid){
+    const [_, thread] = await this.db.execute(`--sql
+    UPDATE thread
+    SET pined_cid = pined_cid + 1
+    `,[cid, new_cid])
     return true
   }
 
   async removePinned(cid) {
+    const [_, thread] = await this.db.execute(`--sql
+    UPDATE thread
+    SET pined_cid = pined_cid - 1
+    `,[cid, new_cid])
     return true
   }
 
   async updateStatus(cid, new_status_id) {
+    const [_, comment] = await this.db.excute(`--sql
+    UPDATE comment
+    let conditions = []
+    if (visibility == 'normal') conditions.push("c.status < 3")
+    if (visibility == 'blocked') conditions.push("c.status > 2")
+
+  return conditions.length ? " WHERE "+ conditions.join(" AND ") : ""
+    `,[cid, new_status_id])
     return true
   }
   
   async createReport(cid, reason_id, user_id){
+    const [_, comment_reports] = await this.db.excute(`--sql
+    INSERT into comment_reports
+    ( cid , user_id , reason_id)
+    cid = getRandomInt(1000000);
+    reason_id = 0;
+
+    
+    `[cid, reason_id, user_id])
     return true
   }
 }
 
-
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
