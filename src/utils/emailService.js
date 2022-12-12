@@ -6,7 +6,7 @@ export async function connectGmail() {
   const { EMAIL_USER, EMAIL_PWD } = process.env
 
   if ( !EMAIL_PWD || !EMAIL_PWD ) {
-    throw new Error('Cannot find emial configuration.')
+    throw new Error('Cannot find email configuration.')
   }
   
   gmail_server = nodemailer.createTransport({
