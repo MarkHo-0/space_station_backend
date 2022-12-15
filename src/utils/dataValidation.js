@@ -39,6 +39,7 @@ export function validatePageID(pid = 0) {
 
 export function validateString(orgStr = "", maxLength = 0) {
   if (typeof orgStr !== 'string') return null
+  if (orgStr.trim() == '') return null
   if (orgStr.length > maxLength) return null
   return orgStr
 }
