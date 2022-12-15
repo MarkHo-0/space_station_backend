@@ -10,7 +10,7 @@ export class Comment{
   }
 
   async getOne(cid){
-    const [_, comment] = await this.db.execute(`--sql
+    const [_, comment] = await this.db.execute(`
       SELECT 
       comment_id, content, sender, create_time, 
       like_count ,dislike_count, reply_to, my_reation
@@ -23,7 +23,7 @@ export class Comment{
   
   async getMany(cid_array){
     const arr_str = cid_array.join(" ");
-    const [_, comments_raw] = await this.db.execute(`--sql
+    const [_, comments_raw] = await this.db.execute(`
       SELECT * FROM comment WHERE cid IN [?]
     `, [arr_str])
 
@@ -31,7 +31,7 @@ export class Comment{
   }
 
   async createReaction(cid, type_id, user_id) {
-    const [_, comment_reaction] =await this.db.execute(`--sql
+    const [comment_reactions, _] =await this.db.execute(`
     INSERT into comment_reaction 
     ( 'cid', uid, type)
     `,[cid, type_id, user_id])
@@ -40,7 +40,7 @@ export class Comment{
   }
 
   async updateReaction(cid, type_id, user_id) {
-    const [_, comment_reaction] = await this.db.execute(`--sql
+    const [comment_reactions, _] = await this.db.execute(`
     UPDATE comment 
     SET like_count = like_count + 1
     SET dislike_count = dislike_count + 1
@@ -52,56 +52,45 @@ export class Comment{
   }
 
   async removeReaction(cid, user_id) {
-    const [_, comment_reaction] = await this.db.execute(`--sql
-    UPDATE comment 
-    SET like_count = like_count - 1
-    SET dislike_count = dislike_count - 1
+    const [raw_data ,_] = await this.db.execute(
+      "SELECT `type` FROM comment_reactions WHERE `cid` = ? AND `uid` = ?",
+      [cid, user_id]
+    )
 
-    `,[type_id, user_id])
+    const type = raw_data[0]['type'] 
+
+    if (type == 0){
+      await this.db.execute(
+        "UPDATE comment_reaction SET `like_count` = `like_count` + 1  WHERE `cid` = ? AND `uid` = ?",
+        [cid, user_id]
+      )
+    }else if (type == 1){
+      await this.db.execute(
+        "UPDATE comment_reaction SET `dislike_count` = `dislike_count` + 1  WHERE `cid` = ? AND `uid` = ?",
+        [cid, user_id]
+      )
+    }
     return true
   }
   
-  async setPinned(cid, new_cid){
-    const [_, thread] = await this.db.execute(`--sql
-    UPDATE thread
-    SET pined_cid = pined_cid + 1
-    `,[cid, new_cid])
+  async setPinned(tid, pin_cid){
+    await this.db.execute("UPDATE thread SET `pined_cid` = ? WHERE `tid` = ?",[pin_cid, tid])
     return true
   }
 
-  async removePinned(cid) {
-    const [_, thread] = await this.db.execute(`--sql
-    UPDATE thread
-    SET pined_cid = pined_cid - 1
-    `,[cid, new_cid])
+  async removePinned(tid) {
+    await this.db.execute("UPDATE thread SET `pined_cid` = NULL  WHERE `tid` = ?", [tid])
     return true
   }
 
   async updateStatus(cid, new_status_id) {
-    const [_, comment] = await this.db.excute(`--sql
-    UPDATE comment
-    let conditions = []
-    if (visibility == 'normal') conditions.push("c.status < 3")
-    if (visibility == 'blocked') conditions.push("c.status > 2")
-
-  return conditions.length ? " WHERE "+ conditions.join(" AND ") : ""
-    `,[cid, new_status_id])
+    await this.db.excute("UPDATE comment SET `status` = ?", [new_status_id])
     return true
   }
   
   async createReport(cid, reason_id, user_id){
-    const [_, comment_reports] = await this.db.excute(`--sql
-    INSERT into comment_reports
-    ( cid , user_id , reason_id)
-    cid = getRandomInt(1000000);
-    reason_id = 0;
-
-    
-    `[cid, reason_id, user_id])
-    return true
+    await this.db.excute("INSERT into comment_reports (`cid`,`by_uid`,`reason_id`) VALUES (?,?,?)", [cid, user_id, reason_id])
+    return true 
   }
-}
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
 }

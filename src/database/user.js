@@ -65,7 +65,7 @@ export class User{
   }
 
   async createOne(sid, nickname, pwd) {
-    const [_, __] = await this.db.query(
+    await this.db.query(
       "INSERT INTO users (`nickname`) VALUES (?);" +
       "INSERT INTO users_info (`uid`, `sid`, `fid`) VALUES (LAST_INSERT_ID(), ?, null);" +
       "INSERT INTO users_pwd (`sid`, `hashed_pwd`) VALUES ((SELECT `sid` FROM users_info WHERE `uid` = LAST_INSERT_ID()), UNHEX(?));"
@@ -76,10 +76,12 @@ export class User{
   }
 
   async updateNickname(uid, newName) {
+    await this.db.execute("UPDATE users SET `nickname` = ?, `last_update` = NOW() WHERE `uid` = ? ", [newName, uid])
     return true
   }
 
   async updadeFaculty(uid, newFid) {
+    await this.db.execute("UPDATE users_info SET `fid` = ? WHERE `uid` = ? " , [newFid, uid ])
     return true
   }
 
