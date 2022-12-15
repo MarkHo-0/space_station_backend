@@ -18,70 +18,65 @@ export function validateThreadData({pid, fid, title, content}) {
   return {
     "pid": validatePageID(pid),
     "fid": validateFacultyID(fid),
-    "title": validateString(title, 20),
-    "content": validateString(content, 1000)
+    "title": validateThreadTitle(title),
+    "content": validateThreadContent(content)
   }
 }
 
-export function validateFacultyID(fid = 0) {
-  if (typeof fid == 'string') fid = parseInt(fid)
-  if (!Number.isInteger(fid)) return null
-  if (fid < 0 || fid > 6) return null
-  return fid
+export function validateThreadQueryData({pid, fid, order, cursor}) {
+  return {
+    "pid": validatePageID(pid),
+    "fid": validateFacultyID(fid),
+    "order": validateThreadOrder(order) || THREAD_ORDER.BY_TIME,
+    "cursor": validateCursor(cursor)
+  }
 }
 
-export function validatePageID(pid = 0) {
-  if (typeof pid == 'string') pid = parseInt(pid)
-  if (!Number.isInteger(pid)) return null
-  if (pid < 0 || pid > 1) return null
-  return pid
-}
+export function validateFacultyID(fid) { return validateInteger(fid, 0, 6) }
+export function validatePageID(pid) { return validateInteger(pid, 1, 2) }
+export function validateThreadOrder(order) { return validateInteger(order, 1, 2) }
+export function validateSID(sid) { return validateInteger(sid, 10000000, 40000000) }
+export function validateUID(uid) { return validateInteger(uid, 1, 40000000) }
+export function validateVerificationCode(vf_code) { return validateInteger(vf_code, 1000, 9999) }
 
-export function validateString(orgStr = "", maxLength = 0) {
-  if (typeof orgStr !== 'string') return null
-  if (orgStr.trim() == '') return null
-  if (orgStr.length > maxLength) return null
-  return orgStr
-}
-
-export function validateNickname(nickname = '') {
-  if (typeof nickname !== 'string') return null
-  if (nickname.length < 2 || nickname.length > 10) return null
-  return nickname
-}
-
-
-export function validateSID(sid = 0) {
-  if (typeof sid == 'string') sid = parseInt(sid)
-  if (!Number.isInteger(sid)) return null
-  if (sid < 10000000 || sid > 40000000) return null
-  return sid
-}
-
-export function validateUID(uid = 0) {
-  if (typeof uid == 'string') uid = parseInt(uid)
-  if (!Number.isInteger(uid)) return null
-  if (uid < 1) return null
-  return uid
-}
+export function validateThreadTitle(title) { return validateString(title, 1, 20) }
+export function validateThreadContent(content) { return validateString(content, 1, 5000) }
+export function validateNickname(nickname) { return validateString(nickname, 2, 10) }
+export function validateDeviceName(device_name) { return validateString(device_name, 2, 20) }
 
 const pwd_checker = /[0-9a-f]{64}/i
-export function validateHashedPassword(pwd = '') {
+/** @param {string} pwd */
+export function validateHashedPassword(pwd) {
   if (typeof pwd !== 'string') return null
   if (pwd_checker.test(pwd) == false) return null
   return pwd
 }
 
-export function validateDeviceName(name = '') {
-  if (typeof name !== 'string') return null
-  if (name.length > 20) return null
-  return name
+const base64_checker = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+/** @param {string} cursor_str */
+export function validateCursor(cursor_str) {
+  if (typeof cursor_str !== 'string') return null
+  if (base64_checker.test(cursor_str) == false) return null
+  try {
+    const cursor = window.atob(cursor_str)
+    return JSON.parse(cursor)
+  } catch (error) { return null }
 }
 
-export function validateVerificationCode(vf_code = 0) {
-  if (!Number.isInteger(vf_code)) return null
-  if (vf_code < 1000 || vf_code > 9999) return null
-  return vf_code
+/** @param {number} input @param {number} MIN @param {number} MAX */
+export function validateInteger(input, MIN, MAX) {
+  if (typeof input == 'string') input = parseInt(input)
+  if (!Number.isInteger(input)) return null
+  if (input < MIN || input > MAX) return null
+  return input
+}
+
+/** @param {string} input @param {number} MIN @param {number} MAX */
+export function validateString(input, MIN_LEN, MAX_LEN) {
+  if (typeof input !== 'string') return null
+  if (input = input.trim() == '') return null
+  if (input.length < MIN_LEN || input.length > MAX_LEN) return null
+  return input
 }
 
 /** @readonly @enum {number} */
@@ -97,6 +92,13 @@ export const FACULTY = {
 
 /** @readonly @enum {number} */
 export const FORUM_PAGE = {
+  ALL: 0,
   CASUAL: 1,
   ACADEMIC: 2
+}
+
+/** @readonly @enum {number} */
+export const THREAD_ORDER = {
+  BY_TIME: 1,
+  BY_HEAT: 2
 }
