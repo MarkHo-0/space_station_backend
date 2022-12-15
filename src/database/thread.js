@@ -42,7 +42,6 @@ export class Thread{
       `SELECT h.tid FROM threads_heat h INNER JOIN threads t ON h.tid = t.tid INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY h.degree DESC, t.last_update_time DESC LIMIT ? OFFSET ?`,
       [quantity.toString(), cursor.toString()]
     )
-
     return indexes.map(i => parseInt(i.tid))
   }
 
@@ -56,12 +55,10 @@ export class Thread{
    */
   async getNewestIndexes(page_id, faculty_id, quantity, cursor) {
     const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
-
     const [indexes, _] = await this.db.execute(
       `SELECT t.tid FROM threads t INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY t.last_update_time DESC LIMIT ? OFFSET ?`,
       [quantity.toString(), cursor.toString()]
     )
-
     return indexes.map(i => parseInt(i.tid))
   }
 
@@ -73,15 +70,14 @@ export class Thread{
   }
 
   async createNew(title, content, user_id, page_id, faculty_id) {
-    //呼叫資料庫內的 CREATE_THREAD 函數
-    //該函數會做以下 5 件事：
+    //呼叫資料庫內的 CREATE_THREAD 函數，該函數會做以下 5 件事：
     //1. 將內文以留言方式寫入資料庫 
     //2. 將標題以貼文方式寫入資料庫
     //3. 將貼文和留言透過ID關聯在一起
     //4. 初始化貼文熱度：50
     //5. 用戶發文數加 1
     const [raw_data, _] = await this.db.execute("CALL CREATE_THREAD(?, ?, ?, ?, ?)", [title, content, page_id, faculty_id, user_id])
-    const new_tid = Object.values(raw_data[0][0])[0]
+    const new_tid = Object.values(raw_data[1][0])[0]
     return parseInt(new_tid)
   }
 }
@@ -95,8 +91,8 @@ export class Thread{
 function getSqlFilterCode(page_id, faculty_id, visibility) {
   let conditions = []
 
-  if (page_id) conditions.push("AND t.pid = " + page_id)
-  if (faculty_id) conditions.push("AND t.fid = " + faculty_id)
+  if (page_id != null) conditions.push("t.pid = " + page_id)
+  if (faculty_id != null) conditions.push("t.fid = " + faculty_id)
 
   if (visibility == 'normal') conditions.push("c.status < 3")
   if (visibility == 'blocked') conditions.push("c.status > 2")
