@@ -1,5 +1,5 @@
 import { User, SimpleUser } from '../models/user.js'
-import { validateRegisterData, validateSID, validLoginData } from '../utils/dataValidation.js'
+import { validateRegisterData, validateSID, validateLoginData } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
@@ -66,7 +66,7 @@ export async function userRegister(req, res) {
 /** @type {RouteFunction} */
 export async function userLogin(req, res) {
   //校驗資料是否正確
-  const { sid, pwd, device_name } = validLoginData(req.body)
+  const { sid, pwd, device_name } = validateLoginData(req.body)
   if (!sid || !pwd) return res.status(401).send()
 
   //驗證學生編號和密碼是否正確
