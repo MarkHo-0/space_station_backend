@@ -1,5 +1,6 @@
 import { Thread } from '../models/thread.js';
 import { Comment } from '../models/comment.js';
+import { FACULTY, FORUM_PAGE, validateThreadData } from '../utils/dataValidation.js';
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
@@ -30,7 +31,21 @@ export async function getThreads(req, res) {
 
 /** @type {RouteFunction} */
 export function postThread(req, res) {
-    
+  //校驗參數
+  const { pid, fid, title, content } = validateThreadData(req.body)
+  if (!pid || !fid || !title || !content || fid == FACULTY.NONE_OR_ALL) {
+    res.status(422).send()
+  }
+
+  //如果是吹水臺，則無需科系編號
+  if (pid == FORUM_PAGE.CASUAL) {
+    fid == FACULTY.NONE_OR_ALL
+  }
+
+  //寫入資料庫，若成功返回新貼文的編號
+  req.db.thread.createNew(title, content, req.user.user_id, pid, fid)
+    .then(tid => res.send({new_tid: tid}))
+    .catch(_ => res.status(400).send())
 }
 
 /** @type {RouteFunction} */

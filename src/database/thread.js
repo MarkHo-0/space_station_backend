@@ -73,9 +73,16 @@ export class Thread{
   }
 
   async createNew(title, content, user_id, page_id, faculty_id) {
-    //TODO: 完成創建貼文資料庫操作
-
-    return true
+    //呼叫資料庫內的 CREATE_THREAD 函數
+    //該函數會做以下 5 件事：
+    //1. 將內文以留言方式寫入資料庫 
+    //2. 將標題以貼文方式寫入資料庫
+    //3. 將貼文和留言透過ID關聯在一起
+    //4. 初始化貼文熱度：50
+    //5. 用戶發文數加 1
+    const [raw_data, _] = await this.db.execute("CALL CREATE_THREAD(?, ?, ?, ?, ?)", [title, content, page_id, faculty_id, user_id])
+    const new_tid = Object.values(raw_data[0][0])[0]
+    return parseInt(new_tid)
   }
 }
 
