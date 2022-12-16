@@ -9,8 +9,11 @@ export class Thread{
   }
 
   async getOne(tid) {
-    //TODO: 完成搜索語句
-    return threadFormDB(fields[0])
+    const [raw_thread] = await this.db.execute(
+      "SELECT t.*, u.nickname, c.like_count, c.dislike_count, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid = ?;", [tid]
+    )
+    if (raw_thread.length !== 1) return null
+    return threadFormDB(raw_thread[0])
   }
 
   /**
@@ -21,7 +24,7 @@ export class Thread{
   async getMany(tid_array = []) {
     if (tid_array.length < 1) return []
 
-    const [raw_threads, _] = await this.db.query("SELECT t.tid, t.pid, t.fid, t.title, t.create_time, t.last_update_time, t.content_cid, u.uid, u.nickname, t.comment_count, c.like_count, c.dislike_count, t.pined_cid, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid IN (?) ORDER BY FIELD(t.tid, ?)",
+    const [raw_threads, _] = await this.db.query("SELECT t.*, u.nickname, c.like_count, c.dislike_count, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid IN (?) ORDER BY FIELD(t.tid, ?)",
       [tid_array, tid_array]
     )
 
