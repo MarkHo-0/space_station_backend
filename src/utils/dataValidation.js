@@ -19,7 +19,7 @@ export function validateThreadData({pid, fid, title, content}) {
     "pid": validatePageID(pid),
     "fid": validateFacultyID(fid),
     "title": validateThreadTitle(title),
-    "content": validateThreadContent(content)
+    "content": validateContent(content)
   }
 }
 
@@ -32,15 +32,23 @@ export function validateThreadQueryData({pid, fid, order, cursor}) {
   }
 }
 
+export function validateCommentData({tid, reply_to, content}){
+  return {
+    "tid": validatePositiveInt(tid),
+    "reply_to": validatePositiveInt(reply_to),
+    "content": validateContent(content)
+  }
+}
+
 export function validateFacultyID(fid) { return validateInteger(fid, 0, 6) }
 export function validatePageID(pid) { return validateInteger(pid, 1, 2) }
 export function validateThreadOrder(order) { return validateInteger(order, 1, 2) }
 export function validateSID(sid) { return validateInteger(sid, 10000000, 40000000) }
-export function validateUID(uid) { return validateInteger(uid, 1, 40000000) }
 export function validateVerificationCode(vf_code) { return validateInteger(vf_code, 1000, 9999) }
+export function validatePositiveInt(tid) { return validateInteger(tid, 1, Number.MAX_VALUE) }
 
 export function validateThreadTitle(title) { return validateString(title, 1, 20) }
-export function validateThreadContent(content) { return validateString(content, 1, 5000) }
+export function validateContent(content) { return validateString(content, 1, 5000) }
 export function validateNickname(nickname) { return validateString(nickname, 2, 10) }
 export function validateDeviceName(device_name) { return validateString(device_name, 2, 20) }
 
@@ -74,7 +82,7 @@ export function validateInteger(input, MIN, MAX) {
 /** @param {string} input @param {number} MIN @param {number} MAX */
 export function validateString(input, MIN_LEN, MAX_LEN) {
   if (typeof input !== 'string') return null
-  if (input = input.trim() == '') return null
+  if ((input = input.trim()) == '') return null
   if (input.length < MIN_LEN || input.length > MAX_LEN) return null
   return input
 }

@@ -1,5 +1,5 @@
 import { User, SimpleUser } from '../models/user.js'
-import { validateRegisterData, validateSID, validateLoginData } from '../utils/dataValidation.js'
+import { validateRegisterData, validateLoginData, validatePositiveInt } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
@@ -19,7 +19,7 @@ export function getUserThreads(req, res) {
 /** @type {RouteFunction} */
 export async function getUserState(req, res) {
   //檢查學生編號是否合法
-  const sid = validateSID(req.params['sid'])
+  const sid = validatePositiveInt(req.params['sid'])
   if (!sid) return res.status(400).send()
 
   //透過學生編號獲取用戶訊息
