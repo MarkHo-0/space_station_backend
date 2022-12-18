@@ -46,46 +46,20 @@ export class Comment{
     return parseInt(new_cid)
   }
 
-  async createReaction(cid, type_id, user_id) {
-    const [comment_reactions, _] =await this.db.execute(`
-    INSERT into comment_reaction 
-    ( 'cid', uid, type)
-    `,[cid, type_id, user_id])
-
+  async createReaction(cid, user_id, type_id) {
+    //呼叫資料庫內的 CREATE_REACTION 函數，該函數會做以下 2 件事：
+    // 1.將互動類型寫入資料庫
+    // 2.點讚數/踩數 +1
+    await this.db.execute("CALL CREATE_REACTION(?, ?, ?)", [cid, user_id, type_id])
     return true
-  }
-
-  async updateReaction(cid, type_id, user_id) {
-    const [comment_reactions, _] = await this.db.execute(`
-    UPDATE comment 
-    SET like_count = like_count + 1
-    SET dislike_count = dislike_count + 1
-
-    `,[type_id, user_id])
-    
-    return true
-    
   }
 
   async removeReaction(cid, user_id) {
-    const [raw_data ,_] = await this.db.execute(
-      "SELECT `type` FROM comment_reactions WHERE `cid` = ? AND `uid` = ?",
-      [cid, user_id]
-    )
-
-    const type = raw_data[0]['type'] 
-
-    if (type == 0){
-      await this.db.execute(
-        "UPDATE comment_reaction SET `like_count` = `like_count` + 1  WHERE `cid` = ? AND `uid` = ?",
-        [cid, user_id]
-      )
-    }else if (type == 1){
-      await this.db.execute(
-        "UPDATE comment_reaction SET `dislike_count` = `dislike_count` + 1  WHERE `cid` = ? AND `uid` = ?",
-        [cid, user_id]
-      )
-    }
+    //呼叫資料庫內的 REMOVE_REACTION 函數，該函數會做以下 3 件事：
+    // 1.獲取用戶上次的互動類型
+    // 2.刪除互動資料
+    // 3.點讚數/踩數 -1
+    await this.db.execute("CALL REMOVE_REACTION(?, ?)", [cid, user_id])
     return true
   }
   
@@ -95,7 +69,7 @@ export class Comment{
   }
 
   async removePinned(tid) {
-    await this.db.execute("UPDATE thread SET `pined_cid` = NULL  WHERE `tid` = ?", [tid])
+    await this.db.execute("UPDATE thread SET `pined_cid` = NULL WHERE `tid` = ?", [tid])
     return true
   }
 

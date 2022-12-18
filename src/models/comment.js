@@ -64,7 +64,7 @@ export function commentFromDB(d, r) {
 }
 
 /** @readonly @enum {number} */
-const COMMENT_STATUS = {
+export const COMMENT_STATUS = {
   NORMAL: 0,
   MANUALLY_NORMAL: 1,
   MAYBE_PROBLEMATIC: 2,
@@ -73,7 +73,7 @@ const COMMENT_STATUS = {
 }
 
 /** @readonly @enum {number} */
-const COMMENT_REACTION_TYPE = {
+export const COMMENT_REACTION_TYPE = {
   NONE: 0,
   LIKE: 1,
   DISLIKE: 2

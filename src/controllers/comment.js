@@ -1,4 +1,5 @@
-import { validateCommentData } from '../utils/dataValidation.js';
+import { COMMENT_REACTION_TYPE } from '../models/comment.js';
+import { validateCommentData, validateRreactionType } from '../utils/dataValidation.js';
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
@@ -38,16 +39,28 @@ export function getComment(req, res) {
 }
 
 /** @type {RouteFunction} */
-export function reactComment(req, res) {
-    let cid = parseInt(req.path['cid'])
-    let cr_type = parseInt (req.parms['type'])
+export async function reactComment(req, res) {
+  const new_reaction = validateRreactionType(req.query['type'])
+  if(!new_reaction) return res.status(422).send()
 
-    if ( isNaN(cid) ) 
-        return res.status(400).send()
+  const comment_id = req.target.comment.id
+  const old_reaction = req.target.comment.userReation
+  const user_id = req.user.user_id
 
-    if ( isNaN(cr_type) || cr_type !== 0 || cr_type !== 1)
-        return res.status(400).send()
+  if (old_reaction !== COMMENT_REACTION_TYPE.NONE) {
+    //如果用戶曾經已互動，則先刪除舊有的互動紀錄
+    await req.db.comment.removeReaction(comment_id, user_id).then(_ => {})
 
+    //檢查是否需要新增互動，如否則返回
+    if (new_reaction == old_reaction) {
+      return res.send({"new_reaction": 0})
+    }
+  }
+  
+  //寫入新的互動紀錄
+  req.db.comment.createReaction(comment_id, user_id, new_reaction)
+    .then(_ => res.send({new_reaction}))
+    .catch(_ => res.status(400).send('UNKNOWN ERROR'))
 }
 
 /** @type {RouteFunction} */

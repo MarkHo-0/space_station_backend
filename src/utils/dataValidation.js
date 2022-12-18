@@ -45,6 +45,7 @@ export function validatePageID(pid) { return validateInteger(pid, 1, 2) }
 export function validateThreadOrder(order) { return validateInteger(order, 1, 2) }
 export function validateSID(sid) { return validateInteger(sid, 10000000, 40000000) }
 export function validateVerificationCode(vf_code) { return validateInteger(vf_code, 1000, 9999) }
+export function validateRreactionType(r_type) { return validateInteger(r_type, 1, 2) }
 export function validatePositiveInt(tid) { return validateInteger(tid, 1, Number.MAX_VALUE) }
 
 export function validateThreadTitle(title) { return validateString(title, 1, 20) }
