@@ -64,8 +64,30 @@ export async function reactComment(req, res) {
 }
 
 /** @type {RouteFunction} */
-export function pinOrUnpinComment(req, res) {
-    
+export async function pinOrUnpinComment(req, res) {
+  const target_comment_id = req.target.comment.id
+  const parent_thread_id = req.target.comment.parentThreadID
+
+  //檢查貼文是否仍然可用
+  const parent_thread = await req.db.thread.getOne(parent_thread_id) 
+  if (!parent_thread || parent_thread.isHidden) {
+    return res.status(404).send()
+  }
+
+  //檢查操作用戶是否為貼文擁有者
+  if (parent_thread.sender.user_id !== req.user.user_id) {
+    return res.status(403).send()
+  }
+
+  //若新的留言編號和舊的頂置編號一致，則代表用戶移除頂置，相反則更新頂置
+  if (parent_thread.pinedCommentID == target_comment_id) {
+    await req.db.comment.removePinned(parent_thread_id)
+  } else {
+    await req.db.comment.setPinned(parent_thread_id, target_comment_id)
+  }
+
+  //完成，返回用戶
+  res.send()
 }
 
 /** @type {RouteFunction} */

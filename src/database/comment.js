@@ -64,12 +64,12 @@ export class Comment{
   }
   
   async setPinned(tid, pin_cid){
-    await this.db.execute("UPDATE thread SET `pined_cid` = ? WHERE `tid` = ?",[pin_cid, tid])
+    await this.db.execute("UPDATE threads SET `pined_cid` = ? WHERE `tid` = ?",[pin_cid, tid])
     return true
   }
 
   async removePinned(tid) {
-    await this.db.execute("UPDATE thread SET `pined_cid` = NULL WHERE `tid` = ?", [tid])
+    await this.db.execute("UPDATE threads SET `pined_cid` = NULL WHERE `tid` = ?", [tid])
     return true
   }
 
