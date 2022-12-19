@@ -1,5 +1,5 @@
-import { COMMENT_REACTION_TYPE } from '../models/comment.js';
-import { validateCommentData, validateRreactionType } from '../utils/dataValidation.js';
+import { COMMENT_REACTION_TYPE, COMMENT_STATUS } from '../models/comment.js';
+import { validateCommentData, validateReportReason, validateRreactionType } from '../utils/dataValidation.js';
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
@@ -90,9 +90,41 @@ export async function pinOrUnpinComment(req, res) {
   res.send()
 }
 
-/** @type {RouteFunction} */
-export function reportComment(req, res) {
+const HIDDEN_THRESHORD = 3
+const PROBLEMATIC_THRESHORD = 2
 
+/** @type {RouteFunction} */
+export async function reportComment(req, res) {
+  const reason_id = validateReportReason(req.body['reason_id'])
+  if (!reason_id) return res.status(422).send()
+
+  const target_id = req.target.comment.id
+  const reporter_id = req.user.user_id
+
+  //如用戶曾經已舉報過該則留言，則返回
+  if (await req.db.comment.isUserReported(target_id, reporter_id)) {
+    return res.status(460).send('You have already reported')
+  }
+
+  //將舉報資料寫入資料庫
+  await req.db.comment.createReport(target_id, reason_id, reporter_id)
+
+  //如該則留言已經過人工審查，則不再進行系統審查，直接返回用戶
+  if (req.target.comment.isManualReviewed) return res.send()
+  
+  //獲取留言的總舉報數量
+  const reported_count = await req.db.comment.getReportsCount(target_id)
+
+  //按情況將留言標示為可能存在問題，或直接屏蔽
+  if (reported_count >= HIDDEN_THRESHORD) {
+    await req.db.comment.updateStatus(target_id, COMMENT_STATUS.AUTO_HIDDENT)
+    //TODO: 封禁用戶
+  } else if (reported_count >= PROBLEMATIC_THRESHORD) {
+    await req.db.comment.updateStatus(target_id, COMMENT_STATUS.MAYBE_PROBLEMATIC)
+  }
+
+  //完成，返回用戶
+  res.send()
 }
 
 /** @readonly @enum {number} */

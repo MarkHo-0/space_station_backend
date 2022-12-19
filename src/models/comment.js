@@ -23,6 +23,10 @@ export class Comment {
       return this.parentThreadID === thread.id
     }
 
+    get isManualReviewed() {
+      return this.status == COMMENT_STATUS.MANUALLY_NORMAL || this.status == COMMENT_STATUS.MANUALLY_HIDDENT
+    }
+
     toJSON(isSimple = false) {
         const json = {
             cid: this.id,

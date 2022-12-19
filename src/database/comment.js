@@ -74,13 +74,22 @@ export class Comment{
   }
 
   async updateStatus(cid, new_status_id) {
-    await this.db.excute("UPDATE comment SET `status` = ?", [new_status_id])
+    await this.db.execute("UPDATE comments SET `status` = ? WHERE `cid` = ?", [new_status_id, cid])
     return true
   }
   
   async createReport(cid, reason_id, user_id){
-    await this.db.excute("INSERT into comment_reports (`cid`,`by_uid`,`reason_id`) VALUES (?,?,?)", [cid, user_id, reason_id])
+    await this.db.execute("INSERT into comments_reports (`cid`,`by_uid`,`reason_id`) VALUES (?,?,?)", [cid, user_id, reason_id])
     return true 
   }
 
+  async getReportsCount(cid) {
+    const [raw_data, _] = await this.db.execute("SELECT COUNT(`create_time`) as `count` FROM comments_reports WHERE `cid` = ?", [cid])
+    return parseInt(raw_data[0]['count']) || 0
+  }
+
+  async isUserReported(cid, uid) {
+    const [raw_data, _] = await this.db.execute("SELECT `reason_id` FROM comments_reports WHERE `cid` = ? AND `by_uid` = ?", [cid, uid])
+    return raw_data.length > 0
+  }
 }
