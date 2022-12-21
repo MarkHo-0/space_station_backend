@@ -1,4 +1,5 @@
 import { threadFormDB, Thread as ThreadModel }  from '../models/thread.js'
+import { CURSOR_TYPE, decryptCursor_Timebased, generateCursor_Timebased} from '../utils/pagination.js'
 export class Thread{
 
   /** @type {import('mysql2/promise').Pool} @private */
@@ -31,38 +32,44 @@ export class Thread{
     return raw_threads.map(t => threadFormDB(t))
   }
 
-  /**
-   * 獲取N則熱門貼文的編號
-   * @param {number | null} page_id 
-   * @param {number | null} faculty_id 
-   * @param {number} quantity 
-   * @param {number} cursor 
-   * @returns {Promise<number[]>}
-   */
-  async getHeatestIndexes(page_id, faculty_id, quantity, cursor) {
-    const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
-    const [indexes, _] = await this.db.execute(
-      `SELECT h.tid FROM threads_heat h INNER JOIN threads t ON h.tid = t.tid INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY h.degree DESC, t.last_update_time DESC LIMIT ? OFFSET ?`,
-      [quantity.toString(), cursor.toString()]
+  async getHeatestIndexes(page_id = 0, faculty_id = 0, quantity = 0, cursor_base64 = '') {
+    //解析分頁索引
+    const { beforeTime, offset } = decryptCursor_Timebased(CURSOR_TYPE.HEATEST, cursor_base64)
+
+    //呼叫資料庫內的 GET_HEATEST_THREADS_ID 函數
+    //第三個參數代表是否包括屏蔽的貼文，0 為否，1 為是
+    //最後一個參數是指按什麼時候的熱度計算
+    const [raw_data, _] = await this.db.execute(
+      "CALL GET_HEATEST_THREADS_ID(?, ?, ?, ?, ?, FROM_UNIXTIME(?))",
+      [page_id, faculty_id, 0, quantity, offset, beforeTime]
     )
-    return indexes.map(i => parseInt(i.tid))
+
+    const indexes = raw_data[0] || []
+    
+    return {
+      'threads_id': indexes.map(i => {return parseInt(i.tid)}),
+      'cursor': generateCursor_Timebased(CURSOR_TYPE.HEATEST, beforeTime, offset + indexes.length)
+    }
   }
 
-  /**
-   * 獲取N則最新貼文的編號
-   * @param {number | null} page_id 
-   * @param {number | null} faculty_id 
-   * @param {number} quantity 
-   * @param {number} cursor 
-   * @returns {Promise<number[]>}
-   */
-  async getNewestIndexes(page_id, faculty_id, quantity, cursor) {
-    const filters = getSqlFilterCode(page_id, faculty_id, 'normal')
-    const [indexes, _] = await this.db.execute(
-      `SELECT t.tid FROM threads t INNER JOIN comments c ON c.cid = t.content_cid${filters} ORDER BY t.last_update_time DESC LIMIT ? OFFSET ?`,
-      [quantity.toString(), cursor.toString()]
+  async getNewestIndexes(page_id = 0, faculty_id = 0, quantity = 0, cursor_base64 = '') {
+    //解析分頁索引
+    const { beforeTime, offset } = decryptCursor_Timebased(CURSOR_TYPE.NEWEST, cursor_base64)
+
+    //呼叫資料庫內的 GET_NEWEST_THREADS_ID 函數
+    //第三個參數代表是否包括屏蔽的貼文，0 為否，1 為是
+    //最後一個參數是指按什麼時候的熱度計算
+    const [raw_data, _] = await this.db.execute(
+      "CALL GET_NEWEST_THREADS_ID(?, ?, ?, ?, ?, FROM_UNIXTIME(?))",
+      [page_id, faculty_id, 0, quantity, offset, beforeTime]
     )
-    return indexes.map(i => parseInt(i.tid))
+
+    const indexes = raw_data[0] || []
+    
+    return {
+      'threads_id': indexes.map(i => {return parseInt(i.tid)}),
+      'cursor': generateCursor_Timebased(CURSOR_TYPE.NEWEST, beforeTime, offset + indexes.length)
+    }
   }
 
   async search(query_text, cursor) {
@@ -102,6 +109,5 @@ function getSqlFilterCode(page_id, faculty_id, visibility) {
 
   return conditions.length ? " WHERE "+ conditions.join(" AND ") : ""
 }
-
 
   

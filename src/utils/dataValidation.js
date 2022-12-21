@@ -25,10 +25,10 @@ export function validateThreadData({pid, fid, title, content}) {
 
 export function validateThreadQueryData({pid, fid, order, cursor}) {
   return {
-    "pid": validatePageID(pid),
-    "fid": validateFacultyID(fid),
+    "pid": validatePageID(pid) || 0,
+    "fid": validateFacultyID(fid) || 0,
     "order": validateThreadOrder(order) || THREAD_ORDER.BY_TIME,
-    "cursor": validateCursor(cursor)
+    "cursor_base64": validateCursor(cursor)
   }
 }
 
@@ -40,14 +40,15 @@ export function validateCommentData({tid, reply_to, content}){
   }
 }
 
-export function validateFacultyID(fid) { return validateInteger(fid, 0, 6) }
+export function validateFacultyID(fid) { return validateInteger(fid, 1, 6) }
 export function validatePageID(pid) { return validateInteger(pid, 1, 2) }
 export function validateThreadOrder(order) { return validateInteger(order, 1, 2) }
 export function validateSID(sid) { return validateInteger(sid, 10000000, 40000000) }
 export function validateVerificationCode(vf_code) { return validateInteger(vf_code, 1000, 9999) }
 export function validateRreactionType(r_type) { return validateInteger(r_type, 1, 2) }
 export function validateReportReason(r_reason) { return validateInteger(r_reason, 0, 7) }
-export function validatePositiveInt(tid) { return validateInteger(tid, 1, Number.MAX_VALUE) }
+export function validatePositiveInt(num) { return validateInteger(num, 1, Number.MAX_VALUE) }
+export function validateNonNegativeInt(num) { return validateInteger(num, 0, Number.MAX_VALUE) }
 
 export function validateThreadTitle(title) { return validateString(title, 1, 20) }
 export function validateContent(content) { return validateString(content, 1, 5000) }
@@ -67,10 +68,7 @@ const base64_checker = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]
 export function validateCursor(cursor_str) {
   if (typeof cursor_str !== 'string') return null
   if (base64_checker.test(cursor_str) == false) return null
-  try {
-    const cursor = window.atob(cursor_str)
-    return JSON.parse(cursor)
-  } catch (error) { return null }
+  return cursor_str
 }
 
 /** @param {number} input @param {number} MIN @param {number} MAX */

@@ -10,21 +10,21 @@ const MAX_COMMENTS_PRE_GET = 15;
 /** @type {RouteFunction} */
 export async function getThreads(req, res) {
   //校驗參數
-  let { pid, fid, order, cursor } = validateThreadQueryData(req.query)
+  let { pid, fid, order, cursor_base64 } = validateThreadQueryData(req.query)
 
   //如果是吹水臺，則無需科系編號
-  if (pid == FORUM_PAGE.CASUAL) fid = null
-  
-  if (fid == FACULTY.NONE_OR_ALL) fid = null
+  if (pid == FORUM_PAGE.CASUAL) fid = 0
 
   //選擇合適的排序函數，執行該函數獲取貼文編號列表
-  const ORDERING_FUNCS = [req.db.thread.getNewestIndexes, req.db.thread.getHeatestIndexes]
-  const threadsIndexes = await ORDERING_FUNCS[order - 1].call(req.db.thread, pid, fid, MAX_THREADS_PRE_GET, 0)
-  //TODO: 指標生成
+  const orderingFunction = [req.db.thread.getNewestIndexes, req.db.thread.getHeatestIndexes]
+  const { threads_id, cursor } = await orderingFunction[order - 1].call(req.db.thread, pid, fid, MAX_THREADS_PRE_GET, cursor_base64)
 
   //獲取貼文資料並返回
-  req.db.thread.getMany(threadsIndexes)
-    .then(threads => res.send(threads.map(t => t.toJSON())))
+  req.db.thread.getMany(threads_id)
+    .then(threads => res.send({
+      "threads": threads.map(t => t.toJSON()),
+      "cursor": btoa(JSON.stringify(cursor))
+    }))
     .catch(_ => res.status(400).send())
 }
 
