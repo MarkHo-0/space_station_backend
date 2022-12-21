@@ -29,8 +29,8 @@ const HOME_PAGE_NEWS_COUNT = 8
 
 /** @param {import('../database/thread.js').Thread} threadDB */
 async function fetchHeatestThreads(threadDB) {
-  const heatest_thread_indexes = await threadDB.getHeatestIndexes(null, null, HOME_PAGE_THREADS_COUNT, 0)
-  const heatest_thread = await threadDB.getMany(heatest_thread_indexes)
+  const {threads_id, _} = await threadDB.getHeatestIndexes(0, 0, HOME_PAGE_THREADS_COUNT)
+  const heatest_thread = await threadDB.getMany(threads_id)
   return heatest_thread.map( t => t.toJSON())
 }
 
