@@ -23,7 +23,10 @@ export async function getThreads(req, res) {
   req.db.thread.getMany(threads_id)
     .then(threads => res.send({
       "threads": threads.map(t => t.toJSON()),
-      "cursor": btoa(JSON.stringify(cursor))
+      "has_next": {
+        "has_more": threads.length >= MAX_THREADS_PRE_GET,
+        "next_cursor": btoa(JSON.stringify(cursor))
+      } 
     }))
     .catch(_ => res.status(400).send())
 }
