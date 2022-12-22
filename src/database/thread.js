@@ -32,16 +32,16 @@ export class Thread{
     return raw_threads.map(t => threadFormDB(t))
   }
 
-  async getHeatestIndexes(page_id = 0, faculty_id = 0, quantity = 0, cursor_base64 = '') {
+  async getHeatestIndexes(page_id = 0, faculty_id = 0, query = '', quantity = 0, cursor_base64 = '') {
     //解析分頁索引
     const { beforeTime, offset } = decryptCursor_Timebased(CURSOR_TYPE.HEATEST, cursor_base64)
 
     //呼叫資料庫內的 GET_HEATEST_THREADS_ID 函數
-    //第三個參數代表是否包括屏蔽的貼文，0 為否，1 為是
+    //第四個參數代表是否包括屏蔽的貼文，0 為否，1 為是
     //最後一個參數是指按什麼時候的熱度計算
     const [raw_data, _] = await this.db.execute(
-      "CALL GET_HEATEST_THREADS_ID(?, ?, ?, ?, ?, FROM_UNIXTIME(?))",
-      [page_id, faculty_id, 0, quantity, offset, beforeTime]
+      "CALL GET_HEATEST_THREADS_ID(?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?))",
+      [page_id, faculty_id, query, 0, quantity, offset, beforeTime]
     )
 
     const indexes = raw_data[0] || []
@@ -52,16 +52,16 @@ export class Thread{
     }
   }
 
-  async getNewestIndexes(page_id = 0, faculty_id = 0, quantity = 0, cursor_base64 = '') {
+  async getNewestIndexes(page_id = 0, faculty_id = 0, query = '', quantity = 0, cursor_base64 = '') {
     //解析分頁索引
     const { beforeTime, offset } = decryptCursor_Timebased(CURSOR_TYPE.NEWEST, cursor_base64)
 
     //呼叫資料庫內的 GET_NEWEST_THREADS_ID 函數
-    //第三個參數代表是否包括屏蔽的貼文，0 為否，1 為是
-    //最後一個參數是指按什麼時候的熱度計算
+    //第四個參數代表是否包括屏蔽的貼文，0 為否，1 為是
+    //最後一個參數是指按什麼時候的更新時間計算
     const [raw_data, _] = await this.db.execute(
-      "CALL GET_NEWEST_THREADS_ID(?, ?, ?, ?, ?, FROM_UNIXTIME(?))",
-      [page_id, faculty_id, 0, quantity, offset, beforeTime]
+      "CALL GET_NEWEST_THREADS_ID(?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?))",
+      [page_id, faculty_id, query, 0, quantity, offset, beforeTime]
     )
 
     const indexes = raw_data[0] || []

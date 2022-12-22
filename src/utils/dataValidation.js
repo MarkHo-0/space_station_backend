@@ -23,10 +23,11 @@ export function validateThreadData({pid, fid, title, content}) {
   }
 }
 
-export function validateThreadQueryData({pid, fid, order, cursor}) {
+export function validateThreadQueryData({pid, fid, order, q, cursor}) {
   return {
     "pid": validatePageID(pid) || 0,
     "fid": validateFacultyID(fid) || 0,
+    "query": validateThreadQueryText(q) || '',
     "order": validateThreadOrder(order) || THREAD_ORDER.BY_TIME,
     "cursor_base64": validateCursor(cursor)
   }
@@ -54,6 +55,7 @@ export function validateThreadTitle(title) { return validateString(title, 1, 20)
 export function validateContent(content) { return validateString(content, 1, 5000) }
 export function validateNickname(nickname) { return validateString(nickname, 2, 10) }
 export function validateDeviceName(device_name) { return validateString(device_name, 2, 20) }
+export function validateThreadQueryText(text) { return validateString(text, 1, 10) }
 
 const pwd_checker = /[0-9a-f]{64}/i
 /** @param {string} pwd */

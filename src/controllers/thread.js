@@ -10,14 +10,14 @@ const MAX_COMMENTS_PRE_GET = 15;
 /** @type {RouteFunction} */
 export async function getThreads(req, res) {
   //校驗參數
-  let { pid, fid, order, cursor_base64 } = validateThreadQueryData(req.query)
+  let { pid, fid, query, order, cursor_base64 } = validateThreadQueryData(req.query)
 
   //如果是吹水臺，則無需科系編號
   if (pid == FORUM_PAGE.CASUAL) fid = 0
 
   //選擇合適的排序函數，執行該函數獲取貼文編號列表
   const orderingFunction = [req.db.thread.getNewestIndexes, req.db.thread.getHeatestIndexes]
-  const { threads_id, cursor } = await orderingFunction[order - 1].call(req.db.thread, pid, fid, MAX_THREADS_PRE_GET, cursor_base64)
+  const { threads_id, cursor } = await orderingFunction[order - 1].call(req.db.thread, pid, fid, query, MAX_THREADS_PRE_GET, cursor_base64)
 
   //獲取貼文資料並返回
   req.db.thread.getMany(threads_id)
@@ -52,12 +52,6 @@ export function postThread(req, res) {
 
 /** @type {RouteFunction} */
 export function getThread(req, res) {
-    
-}
-
-
-/** @type {RouteFunction} */
-export function searchThread(req, res) {
     
 }
 
