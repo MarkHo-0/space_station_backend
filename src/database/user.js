@@ -114,10 +114,12 @@ export class User{
   }
 
   async setBannedStatus(uid, type_id, valid_time_hours) {
+    await this.db.execute("UPDATE FROM users_baned WHERE `uid` = ?, `type_id` = ?, `valid_time_hours` = ?",[uid, type_id, valid_time_hours])
     return true
   }
 
   async getBannedStatus(uid) {
-    return 0
+    await this.db.execute("SELECT FROM users_baned WHERE `uid` = ?, `type_id` = ?, `valid_time_hours` = ?",[uid, type_id, valid_time_hours])
+    return true
   }
 }

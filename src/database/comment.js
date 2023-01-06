@@ -92,4 +92,4 @@ export class Comment{
     const [raw_data, _] = await this.db.execute("SELECT `reason_id` FROM comments_reports WHERE `cid` = ? AND `by_uid` = ?", [cid, uid])
     return raw_data.length > 0
   }
-}
+}  
