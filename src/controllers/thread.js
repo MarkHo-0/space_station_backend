@@ -1,11 +1,11 @@
 import { Thread } from '../models/thread.js';
 import { Comment } from '../models/comment.js';
-import { FACULTY, FORUM_PAGE, validateThreadData, validateThreadQueryData } from '../utils/dataValidation.js';
+import { FACULTY, FORUM_PAGE, validateThreadData, validateThreadQueryData, validateCursor } from '../utils/dataValidation.js';
 import { TimebasedCursor } from '../utils/pagination.js';
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
-const MAX_THREADS_PRE_GET = 3;
+const MAX_THREADS_PRE_GET = 15;
 const MAX_COMMENTS_PRE_GET = 15;
 
 /** @type {RouteFunction} */
@@ -56,7 +56,31 @@ export function postThread(req, res) {
 
 /** @type {RouteFunction} */
 export function getThread(req, res) {
-    
+  //校驗參數
+  const thread_id = req.target.thread.id
+  const cursor_base64 = validateCursor(req.query['cursor'])
+  const user_id = req.user?.user_id || 0
+
+  //解析分頁數據
+  const cursor = TimebasedCursor.fromBase64(cursor_base64)
+
+  //返回數據
+  req.db.comment.getManyByTID(thread_id, user_id, 1, MAX_COMMENTS_PRE_GET, cursor)
+    .then(comments => {
+      const shouldIncludeThreadDetail = cursor.offset == 0
+      const result = {
+        'comments': comments.map( c => c.toJSON()),
+        'continuous': comments.length < MAX_COMMENTS_PRE_GET ? '' : cursor.increaseOffset(comments.length).toBase64()
+      }
+
+      //如果是第一頁，才會加入貼文詳情
+      if (shouldIncludeThreadDetail) {
+        result['thread'] = req.target.thread.toJSON()
+      }
+
+      res.send(result)
+    })
+    .catch( _ => res.status(400).send(_))
 }
 
 

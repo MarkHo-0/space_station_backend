@@ -1,4 +1,4 @@
-import { commentFromDB } from '../models/comment.js'
+import { Comment as CommentModel } from '../models/comment.js'
 
 export class Comment{
 
@@ -9,22 +9,43 @@ export class Comment{
     this.db = connection
   }
 
-  async getOne(cid, user_id){
-    if (!user_id) user_id = 0
+  async getOne(cid, user_id = 0, reply_depth = 0){
     const [raw_comment, _] = await this.db.execute(
-      "CALL GET_COMMENT(?, ?)", [cid, user_id]
+      "SELECT c.*, u.nickname, r.type AS `reaction_type` FROM (SELECT * FROM comments WHERE `cid` = ?) c LEFT JOIN comments_reactions r ON r.cid = c.cid AND r.uid = ? LEFT JOIN users u ON u.uid = c.sender_uid",
+      [cid, user_id]
     )
-    if (raw_comment[0].length !== 1) return null
-    return commentFromDB(raw_comment[0][0], raw_comment[1][0])
+    if (raw_comment.length !== 1) return null
+
+    const comment = CommentModel.fromDB(raw_comment[0])
+
+    if (reply_depth > 0 && comment.replytoCommentID != null) {
+      const reply = await this.getOne(comment.replytoCommentID, user_id, reply_depth -= 1)
+      comment.setReplyToModel(reply)
+    }
+
+    return comment
   }
   
-  async getMany(cid_array){
-    const arr_str = cid_array.join(" ");
-    const [_, comments_raw] = await this.db.execute(`
-      SELECT * FROM comment WHERE cid IN [?]
-    `, [arr_str])
 
-    return comments_raw.map( c => commentFromDB(c))
+  /** @returns {Promise<CommentModel[]>} */
+  async getManyByTID(tid, user_id = 0, reply_depth = 0, quantity = 0, cursor){
+    const [raw_comments, _] = await this.db.execute(
+      "SELECT c.*, u.nickname, r.type AS `reaction_type` FROM (SELECT * FROM comments WHERE `tid` = ?) c LEFT JOIN comments_reactions r ON r.cid = c.cid AND r.uid = ? LEFT JOIN users u ON u.uid = c.sender_uid LIMIT ? OFFSET ?",
+      [tid, user_id, quantity.toString(), cursor.offset.toString()]
+    )
+
+    return Promise.all(
+      raw_comments.map(async (raw_comment) => {
+        const comment = CommentModel.fromDB(raw_comment)
+
+        if (reply_depth > 0 && comment.replytoCommentID != null) {
+          const reply = await this.getOne(comment.replytoCommentID, user_id, reply_depth -= 1)
+          comment.setReplyToModel(reply)
+        }
+
+        return comment
+      })
+    )
   }
 
   async createNew(content, tid, user_id, reply_to) {

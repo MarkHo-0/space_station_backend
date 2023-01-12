@@ -3,6 +3,7 @@ import { Router } from "express";
 import { authUser, tryAuthUser } from '../middlewares/authUser.js'
 
 import * as Controller from "../controllers/thread.js"
+import { validateThread } from "../middlewares/validateCoT.js";
 
 const router = Router()
 
@@ -13,6 +14,6 @@ router.get('/', Controller.getThreads)
 router.post('/', authUser, Controller.postThread)
 
 //透過編號獲取指定貼文
-router.get('/:tid', tryAuthUser, Controller.getThread)
+router.get('/:tid', tryAuthUser, validateThread, Controller.getThread)
 
 export default router;

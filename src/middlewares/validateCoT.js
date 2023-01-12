@@ -22,13 +22,13 @@ export async function validateComment(req, res, next) {
 
 /** @type {RouteFunction} */
 export async function validateThread(req, res, next) {
-  const thread_id = validatePositiveInt(req.params['cid'])
+  const thread_id = validatePositiveInt(req.params['tid'])
 
   if (!thread_id) {
     return res.status(404).send('Thread ID Invalid.')
   }
 
-  const thread = await req.db.thread.getOne(thread_id, req.user)
+  const thread = await req.db.thread.getOne(thread_id)
 
   if (!thread || thread.isHidden) {
     return res.status(404).send('Thread not Found or Unavailable.')
