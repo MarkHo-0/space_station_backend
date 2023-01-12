@@ -36,12 +36,12 @@ export function postThread(req, res) {
   //校驗參數
   let { pid, fid, title, content } = validateThreadData(req.body)
   if (pid == null || fid == null || !title || !content) {
-    res.status(422).send()
+    return res.status(422).send()
   }
 
   //如果發佈在學術臺，必須有學系編號，否則返回錯誤
   if (pid == FORUM_PAGE.ACADEMIC && fid == FACULTY.NONE_OR_ALL) {
-    res.status(422).send()
+    return res.status(422).send()
   }
 
   //如果發佈在吹水臺，則無需科系編號
