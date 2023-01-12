@@ -2,7 +2,7 @@ import { UserFromDB } from "../models/user";
 import { User } from "../models/user";
 
 const regexCourse_Code = new RegExp('[A-Za-z]{4}[0-9]{4}');
-const regexCLNum = new RegExp('[A-Za-z0-9{5}');
+const regexCLNum = new RegExp('[A-Za-z0-9]{5}');
 
 export async function class_Swap(course_Code, clNum) {
     
