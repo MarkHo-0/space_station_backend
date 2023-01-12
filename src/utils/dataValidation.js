@@ -51,7 +51,7 @@ export function validateReportReason(r_reason) { return validateInteger(r_reason
 export function validatePositiveInt(num) { return validateInteger(num, 1, Number.MAX_VALUE) }
 export function validateNonNegativeInt(num) { return validateInteger(num, 0, Number.MAX_VALUE) }
 
-export function validateThreadTitle(title) { return validateString(title, 1, 20) }
+export function validateThreadTitle(title) { return validateString(title, 1, 50) }
 export function validateContent(content) { return validateString(content, 1, 5000) }
 export function validateNickname(nickname) { return validateString(nickname, 2, 10) }
 export function validateDeviceName(device_name) { return validateString(device_name, 2, 20) }
