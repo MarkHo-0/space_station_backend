@@ -6,6 +6,7 @@ dotenv.config();
 import { connect as connectDB } from './src/database/index.js'
 import { connectGmail } from './src/utils/emailService.js'
 import API_ROUTES from './src/routes/index.js'
+import { initManagers } from './src/managers/runner.js';
 
 //連接資料庫
 await connectDB()
@@ -21,3 +22,6 @@ app.use(express.json())
 app.use('/api', API_ROUTES)
 
 app.listen(3000)
+
+//初始化管理器
+await initManagers()

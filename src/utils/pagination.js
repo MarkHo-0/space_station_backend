@@ -27,6 +27,17 @@ class Cursor {
   }
 }
 
+export class PointerCursor extends Cursor {
+  constructor(pointer = 0) {
+    super()
+    /** @type {number} */ this.pointer = validateNonNegativeInt(pointer) || 0
+  }
+
+  updatePointer(pointer = 0) {
+    this.pointer = pointer
+  }
+}
+
 export class OffsetedCursor extends Cursor {
 
   constructor(offset = 0) {

@@ -1,5 +1,4 @@
 import { threadFormDB, Thread as ThreadModel }  from '../models/thread.js'
-import { TimebasedCursor } from '../utils/pagination.js'
 export class Thread{
 
   /** @type {import('mysql2/promise').Pool} @private */
@@ -78,6 +77,21 @@ export class Thread{
     const [raw_data, _] = await this.db.execute("CALL CREATE_THREAD(?, ?, ?, ?, ?)", [title, content, page_id, faculty_id, user_id])
     const new_tid = Object.values(raw_data[1][0])[0]
     return parseInt(new_tid)
+  }
+
+  /** @returns {Promise<import('../types/threadInteraction.js').ThreadInteraction[]>} */
+  async getInteractions(valid_days = 7, quantity = 5, cursor) {
+    const [raw_data, _] = await this.db.execute(
+      "CALL GET_THREADS_INTERACTIONS(?, ?, ?)", 
+      [valid_days, cursor.pointer, quantity]
+    )
+    return raw_data[0]
+  }
+
+  async createHotnessRecords(records = [[]]) {
+    if (!Array.isArray(records) || records.length == 0) return false
+    await this.db.query("INSERT INTO threads_heat_logs (`tid`, `new_degree`) VALUES ?", [records])
+    return true
   }
 }
 
