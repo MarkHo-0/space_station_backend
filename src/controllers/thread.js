@@ -98,7 +98,7 @@ export async function viewThread(req, res) {
   if (req.user.user_id == thread.sender.user_id) return res.send()
 
   //驗證是否符合最低紀錄時間
-  if (view_time < MIN_RECORD_VIEW_TIME) res.send()
+  if (view_time < MIN_RECORD_VIEW_TIME) return res.send()
 
   //寫入資料庫
   req.db.thread.createViewLog(thread_id, req.user.user_id, view_time)
