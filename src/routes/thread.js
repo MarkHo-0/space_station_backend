@@ -13,6 +13,8 @@ router.get('/', Controller.getThreads)
 //發表一則新的貼文
 router.post('/', authUser, Controller.postThread)
 
+router.post('/view', authUser, Controller.viewThread)
+
 //透過編號獲取指定貼文
 router.get('/:tid', tryAuthUser, validateThread, Controller.getThread)
 

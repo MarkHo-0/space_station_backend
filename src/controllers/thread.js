@@ -1,12 +1,13 @@
 import { Thread } from '../models/thread.js';
 import { Comment } from '../models/comment.js';
-import { FACULTY, FORUM_PAGE, validateThreadData, validateThreadQueryData, validateCursor } from '../utils/dataValidation.js';
+import { FACULTY, FORUM_PAGE, validateThreadData, validateThreadQueryData, validateCursor, validateThreadViewData} from '../utils/dataValidation.js';
 import { TimebasedCursor } from '../utils/pagination.js';
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 const MAX_THREADS_PRE_GET = 15;
 const MAX_COMMENTS_PRE_GET = 15;
+const MIN_RECORD_VIEW_TIME = 5;
 
 /** @type {RouteFunction} */
 export async function getThreads(req, res) {
@@ -81,6 +82,26 @@ export function getThread(req, res) {
       res.send(result)
     })
     .catch( _ => res.status(400).send(_))
+}
+
+/** @type {RouteFunction} */
+export async function viewThread(req, res) {
+  //校验參數
+  const {thread_id, view_time} = validateThreadViewData(req.body)
+  if (!thread_id || !view_time) {
+    return res.status(422).send()
+  }
+
+  //驗證貼文是否可讀
+  const thread = await req.db.thread.getOne(thread_id)
+  if (!thread || thread.isHidden) return res.status(400).send()
+
+  //驗證是否符合最低紀錄時間
+  if (view_time < MIN_RECORD_VIEW_TIME) return res.send()
+
+  //寫入資料庫
+  req.db.thread.createViewLog(thread_id, req.user.user_id, view_time)
+    .finally(() => res.send())
 }
 
 

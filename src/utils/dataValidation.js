@@ -33,6 +33,14 @@ export function validateThreadQueryData({pid, fid, order, q, cursor}) {
   }
 }
 
+
+export function validateThreadViewData({tid, view_time}) {
+  return {
+    'thread_id': validateNonNegativeInt(tid),
+    'view_time': validateNonNegativeInt(view_time)
+  }
+}
+
 export function validateCommentData({tid, reply_to, content}){
   return {
     "tid": validatePositiveInt(tid),

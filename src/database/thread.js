@@ -72,7 +72,7 @@ export class Thread{
     //1. 將內文以留言方式寫入資料庫 
     //2. 將標題以貼文方式寫入資料庫
     //3. 將貼文和留言透過ID關聯在一起
-    //4. 初始化貼文熱度：50
+    //4. 初始化貼文熱度值
     //5. 用戶發文數加 1
     const [raw_data, _] = await this.db.execute("CALL CREATE_THREAD(?, ?, ?, ?, ?)", [title, content, page_id, faculty_id, user_id])
     const new_tid = Object.values(raw_data[1][0])[0]
@@ -91,6 +91,14 @@ export class Thread{
   async createHotnessRecords(records = [[]]) {
     if (!Array.isArray(records) || records.length == 0) return false
     await this.db.query("INSERT INTO threads_heat_logs (`tid`, `new_degree`) VALUES ?", [records])
+    return true
+  }
+
+  async createViewLog(thread_id = 0, user_id, view_time = 0) {
+    await this.db.execute(
+      "INSERT INTO threads_view_logs (`tid`, `viewer_uid`, `duration`) VALUE (?, ?, ?)", 
+      [thread_id, user_id, view_time]
+    )
     return true
   }
 }
