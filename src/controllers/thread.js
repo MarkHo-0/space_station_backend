@@ -88,16 +88,17 @@ export function getThread(req, res) {
 export async function viewThread(req, res) {
   //校验參數
   const {thread_id, view_time} = validateThreadViewData(req.body)
-  if (!thread_id || !view_time) {
-    return res.status(422).send()
-  }
+  if (!thread_id || !view_time) return res.status(422).send()
 
   //驗證貼文是否可讀
   const thread = await req.db.thread.getOne(thread_id)
-  if (!thread || thread.isHidden) return res.status(400).send()
+  if (!thread || thread.isHidden) return res.status(404).send()
+
+  //如果是貼文擁有者點擊，則不納入紀錄
+  if (req.user.user_id == thread.sender.user_id) return res.send()
 
   //驗證是否符合最低紀錄時間
-  if (view_time < MIN_RECORD_VIEW_TIME) return res.send()
+  if (view_time < MIN_RECORD_VIEW_TIME) res.send()
 
   //寫入資料庫
   req.db.thread.createViewLog(thread_id, req.user.user_id, view_time)
