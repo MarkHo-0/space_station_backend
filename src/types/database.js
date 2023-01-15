@@ -2,7 +2,7 @@ import { Thread }  from '../database/thread.js'
 import { Comment }  from '../database/comment.js'
 import { User }  from '../database/user.js'
 import { News }  from '../database/news.js'
- 
+import { Facility } from '../database/facility.js'
 //資料庫的類型，分別有3個子模塊
 
  /**
@@ -11,6 +11,7 @@ import { News }  from '../database/news.js'
  * @property {Comment} comment
  * @property {User} user
  * @property {News} news
+ * @property {Facility} facility
  */
 
 export const Types = {}

@@ -2,7 +2,7 @@ import { Thread } from './thread.js';
 import { User } from './user.js';
 import { Comment } from './comment.js';
 import { News } from './news.js'
-
+import { Facility } from './facility.js'
 import { createPool } from 'mysql2/promise'
 
 /** @type {import('../types/database.js').DataBaseModel} */
@@ -31,7 +31,8 @@ export async function connect() {
       'thread': new Thread(connection),
       'comment': new Comment(connection),
       'user': new User(connection),
-      'news': new News(connection)
+      'news': new News(connection),
+      'facility': new Facility(connection)
     }
   } catch (error) {
     throw new Error('Faild to connect the database.')
