@@ -13,7 +13,7 @@ export class Thread {
         /** @type {number} */ this.status = status
         /** @type {number} */ this.contentCommentID = content_cid
         /** @type {number | null} */ this.pinedCommentID = pinned_cid
-        this.stats = stats
+        /** @type {number} */ this.stats = stats
     }
 
     toJSON() {

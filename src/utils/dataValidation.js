@@ -65,6 +65,12 @@ export function validateNickname(nickname) { return validateString(nickname, 2, 
 export function validateDeviceName(device_name) { return validateString(device_name, 2, 20) }
 export function validateThreadQueryText(text) { return validateString(text, 1, 10) }
 
+const courseCode_checker = new RegExp('CC[A-Za-z]{2}[0-9]{4}');
+export function validateCourseCode(code) {
+  if (typeof code !== 'string') return null
+  if (courseCode_checker.test(code) == false) return null
+  return code 
+}
 const pwd_checker = /[0-9a-f]{64}/i
 /** @param {string} pwd */
 export function validateHashedPassword(pwd) {
