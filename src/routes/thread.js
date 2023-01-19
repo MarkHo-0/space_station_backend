@@ -1,7 +1,5 @@
 import { Router } from "express";
-
 import { authUser, tryAuthUser } from '../middlewares/authUser.js'
-
 import * as Controller from "../controllers/thread.js"
 import { validateThread } from "../middlewares/validateCoT.js";
 
