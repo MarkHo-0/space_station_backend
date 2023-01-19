@@ -96,14 +96,35 @@ export function userLogout(req, res) {
 }
 
 /** @type {RouteFunction} */
-export function updateUserFaculty(req, res) {
+export async function updateUserNickname(req, res) {
+  const { nickname } = validateRegisterData(req.body)
+  if ( !nickname ) {
+    return res.status(422).send('Invalid Inputs.')
+  }
 
+  if (await req.db.user.getUserData(sid)) {
+    return res.status(400).send('nickname already exist.')
+  }
+  req.db.user.updateNickname(user)
+    .then(_ => res.send('nickname changed successful'))
+    .catch(_ => res.status(400).send('nickname change falied due to unknown reason. Please try again.'))
 }
 
 /** @type {RouteFunction} */
-export function updateUserNickname(req, res) {
+export async function updateUserFaculty(req, res) {
+  const { Faculty } = validateRegisterData(req.body)
+  if ( !Faculty ) {
+    return res.status(422).send('Invalid Inputs.')
+  }
 
+  if (await req.db.user.getUserData(sid)) {
+    return res.status(400).send('Faculty already exist.')
+  }
+  req.db.user.updateFaculty(user)
+    .then(_ => res.send('Faculty changed successful'))
+    .catch(_ => res.status(400).send('Faculty change falied due to unknown reason. Please try again.'))
 }
+
 
 
 /** @readonly @enum {number} */
