@@ -116,14 +116,13 @@ export async function updateUserFaculty(req, res) {
   if ( !Faculty ) {
     return res.status(422).send('Invalid Inputs.')
   }
-
-  if (await req.db.user.getUserData(sid)) {
-    return res.status(400).send('Faculty already exist.')
-  }
+  
   req.db.user.updateFaculty(user)
     .then(_ => res.send('Faculty changed successful'))
     .catch(_ => res.status(400).send('Faculty change falied due to unknown reason. Please try again.'))
 }
+
+
 
 
 
