@@ -60,13 +60,6 @@ export class Thread{
     return indexes.map(i => {return parseInt(i.tid)})
   }
 
-  async search(query_text, cursor) {
-    //TODO: 完成搜尋內容邏輯
-    const thread = null
-
-    return threadFormDB(thread)
-  }
-
   async createNew(title, content, user_id, page_id, faculty_id) {
     //呼叫資料庫內的 CREATE_THREAD 函數，該函數會做以下 5 件事：
     //1. 將內文以留言方式寫入資料庫 
