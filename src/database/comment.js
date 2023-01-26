@@ -98,6 +98,11 @@ export class Comment{
     await this.db.execute("UPDATE comments SET `status` = ? WHERE `cid` = ?", [new_status_id, cid])
     return true
   }
+
+  async countHidden(uid) {
+    const [raw_data, _] = await this.db.execute("SELECT COUNT(`cid`) as `count` FROM comments WHERE `uid` = ? AND `status` > 2", [uid])
+    return parseInt(raw_data[0]['count']) || 0
+  }
   
   async createReport(cid, reason_id, user_id){
     await this.db.execute("INSERT into comments_reports (`cid`,`by_uid`,`reason_id`) VALUES (?,?,?)", [cid, user_id, reason_id])

@@ -1,10 +1,10 @@
 export class User{
-    id = -1
+    id = 0
     /** @type {SimpleUser} */
     basic_info = null
     gender_id = 1
-    student_id = -1
-    faculty_id = -1
+    student_id = 0
+    faculty_id = 0
     create_time = 0
     thread_count = 0
     comment_count = 0
@@ -43,12 +43,9 @@ export function UserFromDB(d) {
 }
 
 export class SimpleUser {
-    user_id = ''
-    nickname = ''
-
     constructor(user_id, nickname) {
-        this.user_id = user_id
-        this.nickname = nickname
+        /** @type {number} */ this.user_id = user_id || 0
+        /** @type {string} */ this.nickname = nickname || ''
     }
 
     toJSON() {
@@ -57,11 +54,16 @@ export class SimpleUser {
             nickname: this.nickname
         }
     }
+
+    static fromDB(d) {
+        return new SimpleUser(d['uid'], d['nickname'])
+    }
 }
 
-export function SimpleUserFromDB(d) {
-    return new SimpleUser(
-        d['uid'],
-        d['nickname']
-    )
+/** @readonly @enum {number} */
+export const USER_ACTION = {
+    LOGIN: 0,
+    USE_FORUM: 1,
+    USE_TOOLBOX: 2,
+    UPDATE_PROFILE: 3
 }

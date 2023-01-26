@@ -1,4 +1,4 @@
-import { UserFromDB, SimpleUserFromDB } from '../models/user.js'
+import { SimpleUser, UserFromDB } from '../models/user.js'
     
 export class User{
 
@@ -13,7 +13,7 @@ export class User{
     const [raw_user, _] = await this.db.execute("SELECT `uid`, `nickname` FROM users WHERE `uid` = ?", [uid])
 
     if (raw_user.length !== 1) return null
-    return SimpleUserFromDB(raw_user[0])
+    return SimpleUser.fromDB(raw_user[0])
   }
 
   async getOneBySID(sid) {
@@ -23,7 +23,7 @@ export class User{
     )
 
     if (raw_user.length !== 1) return null
-    return SimpleUserFromDB(raw_user[0])
+    return SimpleUser.fromDB(raw_user[0])
   }
 
   async getDetailedOne(uid) {
@@ -113,13 +113,13 @@ export class User{
     return true
   }
 
-  async setBannedStatus(uid, type_id, valid_time_hours) {
-    await this.db.execute("UPDATE FROM users_baned WHERE `uid` = ?, `type_id` = ?, `valid_time_hours` = ?",[uid, type_id, valid_time_hours])
+  async createBanRecord(uid, ban_type, ban_days) {
+    await this.db.execute("INSERT INTO users_baned VALUES (?, ?, NOW(), ADDDATE(NOW(), INTERVAL ? DAY))",[uid, ban_type, ban_days])
     return true
   }
 
-  async getBannedStatus(uid) {
-    await this.db.execute("SELECT FROM users_baned WHERE `uid` = ?, `type_id` = ?, `valid_time_hours` = ?",[uid, type_id, valid_time_hours])
-    return true
+  async isBannedFrom(uid, ban_type) {
+    const [raw_data, _] = await this.db.execute("SELECT `unban_time` FROM users_baned WHERE `uid` = ?, `ban_type` = ?, `unban_time` < NOW()",[uid, ban_type])
+    return raw_data.length > 0
   }
 }

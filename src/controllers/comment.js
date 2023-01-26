@@ -1,4 +1,5 @@
 import { COMMENT_REACTION_TYPE, COMMENT_STATUS } from '../models/comment.js';
+import { USER_ACTION } from '../models/user.js';
 import { validateCommentData, validateReportReason, validateRreactionType } from '../utils/dataValidation.js';
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
@@ -92,6 +93,7 @@ export async function pinOrUnpinComment(req, res) {
 
 const HIDDEN_THRESHORD = 3
 const PROBLEMATIC_THRESHORD = 2
+const ANTO_BAN_THRESHORD = 5
 
 /** @type {RouteFunction} */
 export async function reportComment(req, res) {
@@ -118,7 +120,13 @@ export async function reportComment(req, res) {
   //按情況將留言標示為可能存在問題，或直接屏蔽
   if (reported_count >= HIDDEN_THRESHORD) {
     await req.db.comment.updateStatus(target_id, COMMENT_STATUS.AUTO_HIDDENT)
-    //TODO: 封禁用戶
+    
+    const comment_sender = req.target.comment.sender.user_id
+    const banned_count = await req.db.comment.countHidden(comment_sender)
+    if (banned_count >= ANTO_BAN_THRESHORD) {
+      await req.db.user.createBanRecord(comment_sender, USER_ACTION.USE_FORUM, 30)
+    }
+
   } else if (reported_count >= PROBLEMATIC_THRESHORD) {
     await req.db.comment.updateStatus(target_id, COMMENT_STATUS.MAYBE_PROBLEMATIC)
   }
