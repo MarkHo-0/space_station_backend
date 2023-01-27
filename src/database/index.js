@@ -1,9 +1,10 @@
+import { createPool } from 'mysql2/promise'
+
 import { Thread } from './thread.js';
 import { User } from './user.js';
 import { Comment } from './comment.js';
 import { News } from './news.js'
-import { School } from './school.js'
-import { createPool } from 'mysql2/promise'
+import { Course } from './course';
 
 /** @type {import('../types/database.js').DataBaseModel} */
 let db;
@@ -32,7 +33,7 @@ export async function connect() {
       'comment': new Comment(connection),
       'user': new User(connection),
       'news': new News(connection),
-      'school': new School(connection)
+      'course': new Course(connection)
     }
   } catch (error) {
     throw new Error('Faild to connect the database.')
