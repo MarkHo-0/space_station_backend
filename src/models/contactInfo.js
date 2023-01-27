@@ -18,7 +18,7 @@ export class ContactInfo {
         validator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
         break
       case C_METHOD.WHATSAPP:
-        validator = /^^\+852\s[2-9][0-9]{7}|\++86\s1[0-9]{10}|\+886\s((?=(09))[0-9]{10})$$/
+        validator = /^\+852\s[2-9][0-9]{7}|\++86\s1[0-9]{10}|\+886\s((?=(09))[0-9]{10})$/
         break
     }
 
