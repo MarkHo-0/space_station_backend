@@ -19,7 +19,7 @@ export function viewSwapRequests(req, res) {
 export async function postSwapRequest(req, res) {
   //校驗科目代號
   const code = validateCourseCode(req.body['course_code'])
-  const course = await req.db.school.getCourse(code)
+  const course = await req.db.course.getOne(code)
   if (!course) return res.status(422).send('Invalid Course Code')
 
   //校驗班級編號
@@ -32,6 +32,16 @@ export async function postSwapRequest(req, res) {
   //校驗聯絡資料
   const contact = validateContactInfo(req.body)
   if (!contact) return res.status(422).send('Invalid Contact Info')
+
+  //檢查是否已有相同交換請求
+  if (await req.db.classSwap.hasRequestBy(req.user, code)) {
+    return res.status(400).send('This course had already been requested.')
+  }
+
+  //寫入資料庫
+  req.db.classSwap.createRequest(code, current_class, expected_class, req.user, contact)
+    .then( request_id => res.send(request_id))
+    .catch(e => res.status(400).send('Failed to write to database.'))
 }
 
 /** @type {RouteFunction} */
