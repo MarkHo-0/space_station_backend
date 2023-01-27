@@ -1,3 +1,5 @@
+import { ContactInfo } from '../models/contactInfo'
+
 export function validateRegisterData({sid, nickname, pwd}) {
   return {
     "sid": validateSID(sid),
@@ -49,6 +51,12 @@ export function validateCommentData({tid, reply_to, content}){
   }
 }
 
+export function validateContactInfo({contact_method, contact_detail}) {
+  const contact = new ContactInfo(contact_method, contact_detail)
+  if (contact.isValid == false) return null
+  return contact
+}
+
 export function validateFacultyID(fid) { return validateInteger(fid, 1, 6) }
 export function validatePageID(pid) { return validateInteger(pid, 1, 2) }
 export function validateThreadOrder(order) { return validateInteger(order, 1, 2) }
@@ -65,26 +73,26 @@ export function validateNickname(nickname) { return validateString(nickname, 2, 
 export function validateDeviceName(device_name) { return validateString(device_name, 2, 20) }
 export function validateThreadQueryText(text) { return validateString(text, 1, 10) }
 
-const courseCode_checker = new RegExp('CC[A-Za-z]{2}[0-9]{4}');
 export function validateCourseCode(code) {
-  if (typeof code !== 'string') return null
-  if (courseCode_checker.test(code) == false) return null
-  return code 
-}
-const pwd_checker = /[0-9a-f]{64}/i
-/** @param {string} pwd */
-export function validateHashedPassword(pwd) {
-  if (typeof pwd !== 'string') return null
-  if (pwd_checker.test(pwd) == false) return null
-  return pwd
+  const courseCode_checker = new RegExp('CC[A-Za-z]{2}[0-9]{4}')
+  return validateStringWithRegex(courseCode_checker, code)?.toUpperCase() || null
 }
 
-const base64_checker = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-/** @param {string} cursor_str */
+export function validateHashedPassword(pwd) {
+  const pwd_checker = /[0-9a-f]{64}/i
+  return validateStringWithRegex(pwd_checker, pwd)
+}
+
 export function validateCursor(cursor_str) {
-  if (typeof cursor_str !== 'string') return null
-  if (base64_checker.test(cursor_str) == false) return null
-  return cursor_str
+  const base64_checker = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/
+  return validateStringWithRegex(base64_checker, cursor_str)
+}
+
+/** @param {RegExp} regex @param {string} str */
+export function validateStringWithRegex(regex, str) {
+  if (typeof str !== 'string') return null
+  if (regex.test(str) == false) return null
+  return str
 }
 
 /** @param {number} input @param {number} MIN @param {number} MAX */
