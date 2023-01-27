@@ -4,7 +4,8 @@ import { Thread } from './thread.js';
 import { User } from './user.js';
 import { Comment } from './comment.js';
 import { News } from './news.js'
-import { Course } from './course';
+import { Course } from './course'
+import { ClassSwap } from './class_swap.js'
 
 /** @type {import('../types/database.js').DataBaseModel} */
 let db;
@@ -33,7 +34,8 @@ export async function connect() {
       'comment': new Comment(connection),
       'user': new User(connection),
       'news': new News(connection),
-      'course': new Course(connection)
+      'course': new Course(connection),
+      'classSwap': new ClassSwap(connection) 
     }
   } catch (error) {
     throw new Error('Faild to connect the database.')
