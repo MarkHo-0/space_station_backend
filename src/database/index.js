@@ -4,7 +4,7 @@ import { Thread } from './thread.js';
 import { User } from './user.js';
 import { Comment } from './comment.js';
 import { News } from './news.js'
-import { Course } from './course'
+import { Course } from './course.js'
 import { ClassSwap } from './class_swap.js'
 
 /** @type {import('../types/database.js').DataBaseModel} */

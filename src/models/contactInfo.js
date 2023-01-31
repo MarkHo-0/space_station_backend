@@ -1,4 +1,4 @@
-import { validateInteger, validateString } from "../utils/dataValidation";
+import { validateInteger, validateString } from "../utils/dataValidation.js";
 
 export class ContactInfo {
   constructor(method = 0, detail = '') {

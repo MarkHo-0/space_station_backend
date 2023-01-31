@@ -1,4 +1,4 @@
-import { ContactInfo } from '../models/contactInfo'
+import { ContactInfo } from '../models/contactInfo.js'
 
 export function validateRegisterData({sid, nickname, pwd}) {
   return {
