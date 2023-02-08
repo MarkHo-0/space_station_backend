@@ -4,6 +4,7 @@ import { validateContactInfo, validateCourseCode, validateInteger } from "../uti
 
 /** @type {RouteFunction} */
 export function getStatus(req, res) {
+  
 }
 
 /** @type {RouteFunction} */

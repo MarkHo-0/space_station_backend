@@ -8,17 +8,20 @@ export class ClassSwap {
   }   
 
   async getRequest(id) {
-    //TODO
+    await this.db.execute ( "SELECT `id`, FROM class_swap WHERE `id` = ? ")
     return ClassSwapRequest.fromDB();
   }
 
   async hasRequestBy(requester, course_code) {
-    //TODO
+    await this.db.execute ( "SELECT `requester`, `course_code` FROM  class_swap WHERE `requester` = ? , AND `course_code` = ? "
+    )       
     return false;
   }
 
   async createRequest(course_code, curr_class, exp_class, requester, contact) {
-    //TODO
-    return 0
+    await this.db.execute ( "INSERT INTO (`course_code`, `curr_class`, `exp_class`, `requester`, `contact`) VALUE (?, ?, ?, ?, ?)", 
+      [course_code, curr_class, exp_class, requester, contact]
+    )
+    return true
   }
 }
