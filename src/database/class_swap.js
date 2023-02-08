@@ -24,4 +24,23 @@ export class ClassSwap {
     )
     return true
   }
+
+  async removeSwapRequest(id){
+    await this.db.execute ("DELETE FROM class_swap_request WHERE `id` = ?"
+    [id])
+    
+    return true
+  }
+
+
+
+  async performSwap(id, class_num) {
+    await this.db.execute ("SELECT * FROM class_swap_request WHERE course_code = course_code AND exp_class = my_class GROUP BY current_class "
+    [id, class_num])
+
+    return true
+  }
+
+
+
 }

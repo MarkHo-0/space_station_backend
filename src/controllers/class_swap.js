@@ -3,11 +3,6 @@ import { validateContactInfo, validateCourseCode, validateInteger } from "../uti
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 /** @type {RouteFunction} */
-export function getStatus(req, res) {
-  
-}
-
-/** @type {RouteFunction} */
 export async function searchSwapRequest(req, res) {
 }
 
@@ -47,12 +42,16 @@ export async function postSwapRequest(req, res) {
 
 /** @type {RouteFunction} */
 export function removeSwapRequest(req, res) {
-
+  req.db.classSwap.removeSwapRequest(code, current_class, expected_class, req.user, contact)
+    .then( request_id => res.send(request_id))
+    .catch(e => res.status(400).send('Failed to remove swap request'))  
 }
 
 /** @type {RouteFunction} */
 export function performSwap(req, res) {
-
+  req.db.classSwap.performSwap(code, current_class, expected_class, req.user, contact)
+  .then( request_id => res.send(request_id))
+  .catch(e => res.status(400).send('Failed perform to perform swap request'))  
 }
 
 
