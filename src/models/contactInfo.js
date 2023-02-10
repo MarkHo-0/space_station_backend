@@ -29,8 +29,10 @@ export class ContactInfo {
   }
 
   toJSON() {
-    //TODO
-    return {}
+    return {
+      method: this.method,
+      detail: this.detail
+    }
   }
 }
 

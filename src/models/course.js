@@ -12,12 +12,20 @@ export class Course {
   }
      
   static fromDB(d) {
-    //TODO
-    return new Course()
+    return new Course({
+      course_name: d['name'],
+      course_code: d['code'],
+      min_class_num: d['min_class_num'],
+      max_class_num: d['max_class_num']
+    })
   }
 
   toJSON() {
-    //TODO
-    return {}
+    return {
+      code: this.code,
+      name: this.name,
+      min_class_num: this.minClassNum,
+      max_class_num: this.maxClassNum
+    }
   }
 }
