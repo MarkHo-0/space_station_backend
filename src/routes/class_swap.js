@@ -1,22 +1,17 @@
 import { Router } from "express";
 import * as Controller from "../controllers/class_swap.js"
-import { authUser, tryAuthUser } from "../middlewares/authUser";
+import { authUser } from "../middlewares/authUser";
 
 const router = Router()
 
-//獲取組件狀態 (如果有身分訊息則會返回交換概覽)
-router.get('/', tryAuthUser, Controller.getStatus);
-
-
-//進行統一身分驗證 (下方路由均需要有身分訊息)
+//進行統一身分驗證 (下方路由均需要身份訊息)
 router.use(authUser)
-
 
 //搜尋他人發布的交換請求
 router.get('/search', Controller.searchSwapRequest)
 
 //檢視自己的交換請求
-router.get('/request', Controller.viewSwapRequests)
+router.get('/request', Controller.viewMyRequests)
 
 //發布新的交換請求
 router.post('/request', Controller.postSwapRequest)
