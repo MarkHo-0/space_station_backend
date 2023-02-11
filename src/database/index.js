@@ -6,6 +6,7 @@ import { Comment } from './comment.js';
 import { News } from './news.js'
 import { Course } from './course.js'
 import { ClassSwap } from './class_swap.js'
+import { Setting } from './setting.js'
 
 /** @type {import('../types/database.js').DataBaseModel} */
 let db;
@@ -35,7 +36,8 @@ export async function connect() {
       'user': new User(connection),
       'news': new News(connection),
       'course': new Course(connection),
-      'classSwap': new ClassSwap(connection) 
+      'classSwap': new ClassSwap(connection) ,
+      'setting': new Setting(connection),
     }
   } catch (error) {
     throw new Error('Faild to connect the database.')
