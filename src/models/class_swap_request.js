@@ -1,5 +1,5 @@
-import { jsDate2unixTime } from '../utils/parseTime'
-import { ContactInfo } from './contactInfo'
+import { jsDate2unixTime } from '../utils/parseTime.js'
+import { ContactInfo } from './contactInfo.js'
 
 export class ClassSwapRequest {
   constructor({ swap_id, course_code, requester_uid, current_class_num, expected_class_num, responser_uid, contact}) {
@@ -21,7 +21,7 @@ export class ClassSwapRequest {
   }
 
   isRequestBy(user) {
-    return this.requesterUID == user.id
+    return this.requesterUID == user.user_id
   }
 
   static fromDB(d) {
@@ -29,8 +29,8 @@ export class ClassSwapRequest {
     return new ClassSwapRequest({
       swap_id: d['id'],
       course_code: d['course_code'],
-      current_class_num: d['current_class_num'],
-      expected_class_num: d['expected_class_num'],
+      current_class_num: d['current_class'],
+      expected_class_num: d['expected_class'],
       requester_uid: d['requester_uid'],
       responser_uid: swapped ? d['responser_uid'] : 0,
       contact: new ContactInfo(d['contact_method'], d['contact_detail'])

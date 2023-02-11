@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as Controller from "../controllers/class_swap.js"
-import { authUser } from "../middlewares/authUser";
+import { authUser } from "../middlewares/authUser.js";
 
 const router = Router()
 

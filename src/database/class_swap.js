@@ -19,16 +19,16 @@ export class ClassSwap {
 
   async hasRequestBy(user, course_code) {
     const [sReqs, _] = await this.db.execute(
-      "SELECT `id` FROM  class_swap_requests WHERE `requester` = ? AND `course_code` = ? ",
-      [user, course_code]
+      "SELECT `id` FROM  class_swap_requests WHERE `requester_uid` = ? AND `course_code` = ? ",
+      [user.user_id, course_code]
     )
     return sReqs.length > 0
   }
 
   async createRequest(course_code, curr_class, exp_class, user, contact) {
     await this.db.execute (
-      "INSERT INTO class_swap_requests (`course_code`, `current_class`, `expected_class`, `requester`, `contact_method`, `contact_detail`) VALUE (?, ?, ?, ?, ?, ?)", 
-      [course_code, curr_class, exp_class, user.uid, contact.method, contact.detail]
+      "INSERT INTO class_swap_requests (`course_code`, `current_class`, `expected_class`, `requester_uid`, `contact_method`, `contact_detail`) VALUE (?, ?, ?, ?, ?, ?)", 
+      [course_code, curr_class, exp_class, user.user_id, contact.method, contact.detail]
     )
     return true
   }
@@ -42,7 +42,7 @@ export class ClassSwap {
   }
 
   async setResponser(id, user) {
-    await this.db.execute ("UPDATE class_swap_requests SET `responser_uid` = ?, `response_on` = NOW() WHERE `id` = ?", [user.uid, id])
+    await this.db.execute ("UPDATE class_swap_requests SET `responser_uid` = ?, `response_on` = NOW() WHERE `id` = ?", [user.user_id, id])
     return true
   }
 

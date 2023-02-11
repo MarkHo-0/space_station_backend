@@ -6,7 +6,7 @@
  * @property {import('../database/user').User} user
  * @property {import('../database/news').News} news
  * @property {import('../database/course').Course} course
- * @property {import('../database/class_swap').classSwap} classSwap
+ * @property {import('../database/class_swap').ClassSwap} classSwap
  * @property {import('../database/setting').Setting} setting
  */
 

@@ -25,7 +25,7 @@ export class Course {
     )
 
     if (raw_course.length != 1) return null
-    return CourseModel.fromDB(raw_course);
+    return CourseModel.fromDB(raw_course[0]);
   }
 
 }
