@@ -1,4 +1,5 @@
 import { Router } from "express";
+import cors from 'cors'
 import { mountDB } from '../middlewares/mountDB.js'
 import { getDB } from '../database/index.js'
 import { tryAuthUser } from '../middlewares/authUser.js'
@@ -9,6 +10,9 @@ import UserRoutes from './user.js'
 import VerifyRoutes from './verify.js'
 
 const router = Router()
+
+//解決跨域問題
+router.use(cors())
 
 //掛載資料庫入口到每個請求上
 router.use(mountDB(getDB))
