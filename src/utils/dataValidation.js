@@ -57,8 +57,8 @@ export function validateContactInfo({contact_method, contact_detail}) {
   return contact
 }
 
-export function validateFacultyID(fid) { return validateInteger(fid, 1, 6) }
-export function validatePageID(pid) { return validateInteger(pid, 1, 2) }
+export function validateFacultyID(fid) { return validateInteger(fid, 0, 6) }
+export function validatePageID(pid) { return validateInteger(pid, 0, 2) }
 export function validateThreadOrder(order) { return validateInteger(order, 1, 2) }
 export function validateSID(sid) { return validateInteger(sid, 10000000, 40000000) }
 export function validateVerificationCode(vf_code) { return validateInteger(vf_code, 1000, 9999) }
