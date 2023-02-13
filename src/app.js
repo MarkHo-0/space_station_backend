@@ -3,10 +3,10 @@ import express from 'express'
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { connect as connectDB } from './src/database/index.js'
-import { connectGmail } from './src/utils/emailService.js'
-import API_ROUTES from './src/routes/index.js'
-import { initManagers } from './src/managers/runner.js';
+import { connect as connectDB } from './database/index.js'
+import { connectGmail } from './utils/emailService.js'
+import API_ROUTES from './routes/index.js'
+import { initManagers } from './managers/runner.js';
 
 //連接資料庫
 await connectDB()
