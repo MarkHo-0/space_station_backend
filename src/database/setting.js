@@ -14,7 +14,7 @@ export class Setting {
 
     return {
       class_swapping: Boolean(settings[0]['class_swap_enabled']),
-      parner_matching: Boolean(settings[0]['study_parner_enabled'])
+      study_parner: Boolean(settings[0]['study_parner_enabled'])
     }
   }
 }
