@@ -7,6 +7,7 @@
  * @property {import('../database/news').News} news
  * @property {import('../database/course').Course} course
  * @property {import('../database/class_swap').ClassSwap} classSwap
+ * @property {import('../database/study_partner').StudyPartner} studyPartner "module";}
  * @property {import('../database/setting').Setting} setting
  */
 

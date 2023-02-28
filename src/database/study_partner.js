@@ -15,7 +15,7 @@ export class StudyPartner {
         return true
       }
 
-    async searchPost(keyword){
+    async searchPost(keyword) {
         return true
     }
 
@@ -24,7 +24,11 @@ export class StudyPartner {
         return true
     }   
 
+    async getPost(publish_id) {
+        const [raw,_] = await this.db.execute ("SELECT * FROM study_partner_posts WHERE `id` = ?",[publish_id])
+        return StudyPartnerPost.fromDB(raw)
+    }
     async editPost(contact, course, aimed_Grade, discription) {
-        await this.db.execute ("UPDATE FROM study_parnter_posts (`contact_method`, `contact_detail`, `course`, `aimed_Grade`, `discription`) VALUES(?, ?, ?, ?) WHERE publish_id = ? ", [contact.method, contact.detail, course, aimed_Grade, discription])
+        await this.db.execute ("UPDATE FROM study_partner_posts (`contact_method`, `contact_detail`, `course`, `aimed_Grade`, `discription`) VALUES(?, ?, ?, ?) WHERE publish_id = ? ", [contact.method, contact.detail, course, aimed_Grade, discription])
     }
 }

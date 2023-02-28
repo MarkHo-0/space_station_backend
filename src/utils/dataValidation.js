@@ -69,10 +69,12 @@ export function validateNonNegativeInt(num) { return validateInteger(num, 0, Num
 
 export function validateThreadTitle(title) { return validateString(title, 1, 50) }
 export function validateContent(content) { return validateString(content, 1, 5000) }
+export function validateDiscription(discription) {return validateString(discription, 1, 3000)}
 export function validateNickname(nickname) { return validateString(nickname, 2, 10) }
 export function validateDeviceName(device_name) { return validateString(device_name, 2, 20) }
 export function validateThreadQueryText(text) { return validateString(text, 1, 10) }
 
+export function validateGrade(grade) {return validateInteger(grade, 0, 10)}
 export function validateCourseCode(code) {
   const courseCode_checker = new RegExp('CC[A-Za-z]{2}[0-9]{4}')
   return validateStringWithRegex(courseCode_checker, code)?.toUpperCase() || null
