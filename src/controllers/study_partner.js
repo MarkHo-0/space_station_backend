@@ -1,4 +1,4 @@
-import { validateContactInfo, validateCourseCode, validateDiscription, validateGrade, validateInteger, validatePositiveInt, validateString } from "../utils/dataValidation.js";
+import { validateContactInfo, validateCourseCode, validateDiscription, validateGrade, validateInteger, validatePositiveInt, validateString, validateStudyPartnerPostData } from "../utils/dataValidation.js";
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
 /** @type {RouteFunction} */
@@ -34,23 +34,33 @@ export async function postStudyPartnerPost(req, res) {
     .catch(() => res.status(400).send())
 }
 
+/** @type {RouteFunction} */
 export async function editStudyPartnerPost(req, res) {
+  //檢查貼文是否存在
+  const post_id = validatePositiveInt(req.params['id'])
+  const has_post = req.db.studyPartner.isPostBelongsToUser(post_id, req.user)
+  if (has_post == false) return res.status(404).send()
 
+  const {course_code, aimed_grade, discription, contact } = validateStudyPartnerPostData(req.body)
+  if (!course_code || !aimed_grade || !discription || !contact) return res.status(422)
 
+  //校驗科目代號
+  const course = req.db.course.getOne(course_code)
+  if (!course) return res.status(422).send('Invalid Course Code')
+
+  req.db.studyPartner.editPost(course, aimed_grade, discription, contact)
+    .then(() => res.send())
+    .catch(() => res.status(400).send())  
 }
 
 /** @type {RouteFunction} */
 export async function removeStudyPartnerPost(req, res) {
+  //檢查貼文是否存在
   const post_id = validatePositiveInt(req.params['id'])
-  const post = await req.db.studyPartner.getPost(post_id)
+  const has_post = req.db.studyPartner.isPostBelongsToUser(post_id, req.user)
+  if (has_post == false) return res.status(403).send()
 
-  //檢查互換請求是否存在
-  if (post == null) return res.status(404).send()
-
-  //只有屬於用戶自己的請求才可進行刪除
-  if (post.isPostsBy(req.user) == false) return res.status(403).send()
-
-  //在資料庫中刪除該項請求
+  //在資料庫中刪除該項貼文
   req.db.studyPartner.removePost(post_id)
     .then(() => res.send())
     .catch(() => res.status(400).send())  

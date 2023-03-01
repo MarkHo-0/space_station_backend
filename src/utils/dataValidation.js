@@ -51,6 +51,15 @@ export function validateCommentData({tid, reply_to, content}){
   }
 }
 
+export function validateStudyPartnerPostData({course_code, aimed_grade, discription, contact}) {
+  return {
+    "course_code": validateCourseCode(course_code),
+    "aimed_grade": validateGrade(aimed_grade),
+    "discription": validateString(discription, 1, 3000),
+    "contact": validateContactInfo(contact),
+  }
+}
+
 export function validateContactInfo({contact_method, contact_detail}) {
   const contact = new ContactInfo(contact_method, contact_detail)
   if (contact.isValid == false) return null

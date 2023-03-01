@@ -36,7 +36,13 @@ export class StudyPartner {
         const [raw,_] = await this.db.execute ("SELECT * FROM study_partner_posts WHERE `id` = ?",[publish_id])
         return StudyPartnerPost.fromDB(raw)
     }
-    async editPost(contact, course, aimed_Grade, discription) {
+
+    async isPostBelongsToUser(post_id, user) {
+        const [post_id, _] = await this.db.execute("SELECT `id` FROM study_partner_posts WHERE `id` = ? AND `publisher_uid` = ?")
+        return post_id.length == 1
+    }
+
+    async editPost(course, aimed_Grade, discription, contact) {
         await this.db.execute ("UPDATE FROM study_partner_posts (`contact_method`, `contact_detail`, `course`, `aimed_Grade`, `discription`) VALUES(?, ?, ?, ?) WHERE publish_id = ? ", [contact.method, contact.detail, course, aimed_Grade, discription])
     }
 }
