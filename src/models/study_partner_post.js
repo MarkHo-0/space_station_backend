@@ -4,21 +4,21 @@ import { Course } from './course.js'
 
 export class StudyPartnerPost {
     constructor({publish_id, publisher_uid, contact, course, aimed_Grade, discription}) {
-    /** @type {number} */ this.publisherUID = publisher_uid
-    /** @type {ContactInfo} */ this.contact = contact
     /** @type {number} */ this.id = publish_id
+    /** @type {number} */ this.publisherUID = publisher_uid
     /** @type {Course} */ this.course = course
     /** @type {number} */ this.aimedGrade = aimed_Grade
     /** @type {String} */ this.discription = discription
+    /** @type {ContactInfo} */ this.contact = contact
     }
 
     isPublishBy(user){
-        return this.publisherUID == user.user_id
+      return this.publisherUID == user.user_id
     }
 
     get hasID() {
-        return this.id > 0
-      }
+      return this.id > 0
+    }
 
     static fromDB(d) {
       return new StudyPartnerPost({

@@ -7,10 +7,10 @@ export class Course {
     this.db = connection
   }   
   
-  /** @returns {Array<Course>} */
+  /** @returns {Promise<Array<Course>>} */
   async queryMany(query_string = "", max_quantity = 5) {
     const [raw_courses, _] = await this.db.execute(
-      "SELECT * FROM courses WHERE `code` LIKE ? OR `name` LIKE ? LIMIT ?", 
+      "SELECT * FROM courses WHERE `code` LIKE %?% OR `name` LIKE %?% LIMIT ?", 
       [query_string, query_string, max_quantity.toString()]
     )
 
