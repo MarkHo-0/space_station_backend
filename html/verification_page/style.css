@@ -1,0 +1,60 @@
+@font-face {
+    font-family: 'Lulo Clean';
+    src: url('Lulo Clean W01 One Bold.ttf') format('truetype');
+
+}
+
+@font-face {
+    font-family: 'lulo clean one';
+    src: url('Lulo Clean W01 One.ttf') format('truetype');
+}
+
+header{
+    display:flex;
+    align-items:center;
+    padding:10px 5%; 
+    top:-10px;
+    left:-5px;
+    position:absolute;
+    background-color: #7c8ec1;
+    width:100%;
+    color:white;
+    font-family:"Lulo Clean";
+}
+
+b{
+    font-size: 60px ; 
+    font-family: lulo clean one ;
+    text-align: center; 
+    color: white;
+    position: absolute;
+    top: 40%;
+    left: 39.5%;
+
+}
+footer{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    position:absolute;
+    background-color: #7c8ec1;
+    padding:3px 45%; 
+    width:100%;
+    left:-5px;
+    color:white;
+    font-family:"Lulo Clean";
+    bottom: 0;
+    height:7vh;
+}
+
+footer h2{
+    position:absolute;
+    text-align: center;
+    font-family:"Lulo Clean"
+}
+
+body{
+    background-color: rgb(137, 154, 206);
+    overflow-x:hidden; 
+    margin: 8px; 
+}

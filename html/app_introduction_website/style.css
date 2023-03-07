@@ -15,8 +15,11 @@
 }
 
 body{
-    background-color: #666e87; 
-}
+    background-color: #666e87;
+    display: block;
+    margin: 8px;
+} 
+
 
 
 .reveal{
@@ -34,7 +37,7 @@ body{
 
 
 .title{
-    font-size: 100  Zpx ; 
+    font-size: 100px ; 
     font-family: Lulo Clean; 
     text-align: center; 
     color: #949AAB;
