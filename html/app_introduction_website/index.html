@@ -1,115 +1,164 @@
 <!DOCTYPE html>
 <html Lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css" />
-    <title>SpaceStation</title>
-
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;900&display=swap" rel="stylesheet">
+  <title>Space Station</title>
 </head>
+
 <body>
-        
-        <div class="animated fadeInLeft"  style="z-index:2" >
-            <h1 class = "title">SpaceStation</h1>
-        </div>
-    
-    
-        
-            
-    <form action = "https://www.youtube.com/">
-    <div class = "para">
-    <button class = "download_button"> Start </button>
+  <span class="bg_title">SPACE STATION</span>
+  <section>
+    <div class="first_item_left">
+      <h1>An Online <span>Community</span><br>for <span>HKU SPACE</span></h1>
+      <h2 class="sub_slogan">An app which provides everthing you need<br>in HKU SPACE.</h2>
+      <a href="https://github.com/MarkHo-0/space_station_frontend" style="width: fit-content;">
+        <button class="download_button">Download</button>
+      </a>
     </div>
-    </form>
-
-        <div style="height: 350px; width: 200%; transform: rotate(-13deg);background-color: #7d8397; position: absolute; top: 500px; left: -200px;z-index: 1">
-        </div>
-        <div style="height: 350px; width: 150%; transform: rotate(13deg); background-color: #7d8397; position: absolute; top: 1800px; left: -400px;z-index: 1">
-        </div>    
-        <div style="height: 350px; width: 150%; transform: rotate(-13deg);background-color: #7d8397; position: absolute; top: 2600px; left: -200px;z-index: 1">
-        </div>
-    <section>
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 700px; left: 12px; z-index:2">
-        <b class="fortext1">A more minimal</b></div>
-    
-
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 830px; left: 12px; z-index:2">
-        <b class="fortext2">convenient application </b></div>
-    
-
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 960px; left: 12px; z-index:2">
-        <b class="fortext3">An app which provide everthing you need in HKUSPACE.</b></div>
-   
-        <img src="qwe.jpg" style="position: absolute; width: 300px; top: 900px; height: 600px z-index=4; right:20px;">
+    <div class="first_item_right">
+      <img src="imgs/home_page.jpg">
     </div>
+  </section>
 
-    <div class="animated fadeInRight reveal" style="position: absolute; top: 765px; left: 12px; z-index: 2">
-        <b class="fortext1">and</b></div>
-     
-    <div class="animated fadeInRight reveal" style="position: absolute; top: 895px; left: 12px; z-index: 2;">
-        <b class="fortext1">for students</b></div>
+  <section>
+    <div>
+      <img src="imgs/thread_page.jpg" style="width: 16vw;">
+      <img src="imgs/thread_page.jpg">
+    </div>
+    <div style="text-align: center;">
+      <h1><span>Chi-chat</span> with your<br>schoolmates and have<br>some <span>academic<br>disccusions</span></h1>
+    </div>
+    <div class="bg_line_container">
+      <div class="bg_line" style="rotate: -13deg;"></div>
+    </div>
+  </section>
 
-    </section>
-    
-
-
-
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 1450px; right: 320px; z-index: 2"> 
-    <b class="fortext2">chi-chat</b></div>
-    
-    <div class="animated fadeInRight reveal" style="position: absolute; top: 1450px; right: 10px; z-index: 2"> 
-        <b class="fortext1">with your</b></div>
-
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 1500px; right: 10px; z-index: 2"> 
-    <b class="fortext2">schoolmates</b></div>
-
-    <div class="animated fadeInRight reveal" style="position: absolute; top: 1550px; right: 10px; z-index: 2"> 
-    <b class="fortext1">and have some</b></div>
-    
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 1600px; right: 10px; z-index: 2"> 
-        <b class="fortext2">academic disccusions</b></div>
-
-
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 2200px; left: 10px; z-index: 2" > 
-    <b class="fortext1">Find someone</b></div>
-        
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 2250px; left: 10px; z-index: 2"> 
-    <b class="fortext1">to</b></div>
-        
-    <div class="animated fadeInRight reveal" style="position: absolute; top: 2300px; left: 10px; z-index: 2"> 
-    <b class="fortext2">swap your class</b></div>
-            
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 2350px; left: 10px; z-index: 2"> 
-    <b class="fortext1">or</b></div>
-
-    <div class="animated fadeInLeft reveal" style="position: absolute; top: 2400px; left: 10px; z-index: 2"> 
-    <b class="fortext2">Form a study group</b></div>
-
-    
-
-
-        
-
-</div>
-<script type="text/javascript">
-        window.addEventListener('scroll', reveal);
-
-        function reveal(){
-            var reveal = document.querySelectorAll('.reveal');
-
-            for (var i = 0; i< reveals.length; i++){
-                var windowheight = window.innerHeight;
-                var revealtop = reveal[i].getBoundingClientRect().top;
-                var revealpoint = 150;
-
-                if (revealtop < windowheight - revealpoint){
-                    reveal[i].classList.add('active');
-                }
-
-                else{
-                    reveals[i].classList.remove('active');
-                }
-            }
-        }
-    </script>
+  <section>
+    <div style="position: absolute; right: 10vw; margin-top: 10vw;">
+      <h1>Find someone to <span>swap classes</span><br>or form a <span>study group</span></h1>
+    </div>
+    <div class="bg_line_container">
+      <div class="bg_line" style="rotate: 13deg;">
+        <div style="position: absolute; left: 28%; top: -15%; display:flex;">
+          <div style="display: flex; flex-direction: column;">
+            <img src="imgs/toolbox.jpg">
+            <img src="imgs/toolbox.jpg" style="margin-top: 0.5vw;">
+          </div>
+          <img src="imgs/toolbox.jpg" style="margin-left: 1vw;">
+        </div>
+      </div>
+    </div>
+  </section>
 </body>
+
+<style>
+  body {
+    background-color: #666e87;
+    font-family: 'Source Sans Pro', sans-serif;
+    color: white;
+    overflow-x: hidden;
+    user-select: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .bg_title {
+    position: absolute;
+    font-size: 10vw;
+    font-weight: 900;
+    z-index: -10;
+    color: #9499aa;
+    letter-spacing: 3px;
+    top: -4vw;
+    right: -1vw;
+  }
+
+  h1 {
+    font-size: 4vw;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  h1 span {
+    color: #93a5e2;
+  }
+
+  h2 {
+    font-size: 2.5vw;
+    font-weight: 500;
+  }
+
+  .sub_slogan {
+    margin-top: 2vw;
+    margin-bottom: 8vw;
+  }
+
+  .bg_line_container {
+    overflow-x: hidden;
+    max-width: 100%
+  }
+
+  .bg_line {
+    height: 30vw;
+    width: 200%;
+    position: absolute;
+    left: -50%;
+    background-color: #7d8397;
+    z-index: -1;
+  }
+
+  section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5vh 10vw;
+    height: 100vh;
+    max-height: 50vw;
+    align-items: center;
+  }
+
+  .first_item_left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .first_item_right {
+    margin-left: 3%;
+    margin-right: clamp(2%, 5vw, 30%);
+  }
+
+  img {
+    width: 18vw;
+    object-fit: contain;
+    transition: transform 0.3s;
+  }
+
+  img:hover {
+    transform: scale(1.03);
+  }
+
+  .download_button {
+    border-radius: 1vh;
+    border: none;
+    font-size: 2.5vw;
+    font-weight: 600;
+    padding: 10px 5vw;
+    color: white;
+    background-color: #93a5e2;
+    cursor: pointer;
+    transition: transform 300ms, background-color 300ms, color 300ms;
+  }
+
+  .download_button:hover {
+    transform: scale(1.03);
+    background-color: white;
+    color: rgb(59, 66, 86);
+  }
+</style>
+
 </html>
