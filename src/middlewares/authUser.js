@@ -1,5 +1,7 @@
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
+import { validatePositiveInt } from '../utils/dataValidation.js'
+
 // authUser 為強制身份驗證，tryAuthUser 為自願性身份驗證
 
 /** @type {RouteFunction} */
@@ -45,5 +47,16 @@ export async function tryAuthUser(req, _, next) {
   //嘗試獲取用戶資料並掛載在 req 對象上
   const user = await req.db.user.getOneByUID(token_info.user_id)
   if (user) req.user = user
+  next()
+}
+
+/** @type {RouteFunction} */
+export async function extractTargetUser(req, res, next) {
+  const user_id = validatePositiveInt(req.params['uid'])
+  const user = await req.db.user.getOneByUID(user_id)
+  if (user == null) return res.status(404).send()
+
+  //掛載用戶資料在 req 對象上
+  req.target = {user}
   next()
 }
