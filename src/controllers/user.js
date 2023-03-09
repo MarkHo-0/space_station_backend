@@ -1,4 +1,4 @@
-import { User, SimpleUser } from '../models/user.js'
+import { User, SimpleUser, USER_ACTION } from '../models/user.js'
 import { validateRegisterData, validateLoginData, validatePositiveInt } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
 
@@ -29,7 +29,7 @@ export async function getUserState(req, res) {
   }
 
   //檢查用戶是否被禁止登入
-  if (await req.db.user.isBannedFrom(user, BAN_TYPE.LOGIN)) {
+  if (await req.db.user.isBannedFrom(user, USER_ACTION.LOGIN)) {
     return res.send({sid_state: USER_STATE.BANNED})
   }
 
@@ -127,12 +127,4 @@ const USER_STATE = {
   NOT_EXIST: 0,
   NORMAL: 1,
   BANNED: 2,
-}
-
-/** @readonly @enum {number} */
-const BAN_TYPE = {
-  LOGIN: 0,
-  FORUM: 1,
-  TOOLBOX: 2,
-  UPDATE_PROFILE: 3,
 }
