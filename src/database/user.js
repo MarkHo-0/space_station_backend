@@ -118,8 +118,11 @@ export class User{
     return true
   }
 
-  async isBannedFrom(uid, ban_type) {
-    const [raw_data, _] = await this.db.execute("SELECT `unban_time` FROM users_baned WHERE `uid` = ?, `ban_type` = ?, `unban_time` < NOW()",[uid, ban_type])
+  async isBannedFrom(user, ban_type) {
+    const [raw_data, _] = await this.db.execute(
+      "SELECT `unban_time` FROM users_baned WHERE `uid` = ? AND `ban_type` = ? AND `unban_time` < NOW()",
+      [user.user_id, ban_type]
+    )
     return raw_data.length > 0
   }
 }

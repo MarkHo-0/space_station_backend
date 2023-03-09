@@ -22,19 +22,18 @@ export async function getUserState(req, res) {
   const sid = validatePositiveInt(req.params['sid'])
   if (!sid) return res.status(400).send()
 
-  //透過學生編號獲取用戶訊息
+  //檢查用戶是否存在
   const user = await req.db.user.getOneBySID(sid)
-
-  //若果無法找到用戶則搜尋驗證列表
-  //如果找到則刪除該驗證訊息，需要用戶重新驗證
-  if (!user) {
-    const vfData = await req.db.user.getVerificationData(sid)
-    if (vfData) await req.db.user.removeVerificationData(sid)
+  if (user == null) {
     return res.send({sid_state: USER_STATE.NOT_EXIST})
   }
 
-  //TODO: 等待完成用戶權限功能後，再添加禁止登入檢查
+  //檢查用戶是否被禁止登入
+  if (await req.db.user.isBannedFrom(user, BAN_TYPE.LOGIN)) {
+    return res.send({sid_state: USER_STATE.BANNED})
+  }
 
+  //用戶正常
   res.send({sid_state: USER_STATE.NORMAL})
 }
 
@@ -123,12 +122,17 @@ export async function updateUserFaculty(req, res) {
 }
 
 
-
-
-
 /** @readonly @enum {number} */
 const USER_STATE = {
   NOT_EXIST: 0,
   NORMAL: 1,
   BANNED: 2,
+}
+
+/** @readonly @enum {number} */
+const BAN_TYPE = {
+  LOGIN: 0,
+  FORUM: 1,
+  TOOLBOX: 2,
+  UPDATE_PROFILE: 3,
 }
