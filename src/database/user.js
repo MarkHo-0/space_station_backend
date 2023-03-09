@@ -10,6 +10,7 @@ export class User{
   }
 
   async getOneByUID(uid) {
+    if (uid == null) return null
     const [raw_user, _] = await this.db.execute("SELECT `uid`, `nickname` FROM users WHERE `uid` = ?", [uid])
 
     if (raw_user.length !== 1) return null
@@ -17,6 +18,7 @@ export class User{
   }
 
   async getOneBySID(sid) {
+    if (sid == null) return null
     const [raw_user, _] = await this.db.execute(
       "SELECT `uid`, `nickname` FROM users WHERE `uid` = (SELECT `uid` FROM users_info WHERE `sid` = ?)",
       [sid]

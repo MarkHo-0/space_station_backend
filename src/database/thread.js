@@ -30,6 +30,7 @@ export class Thread{
     return raw_threads.map(t => threadFormDB(t))
   }
 
+  /** @returns {Promise<Array<number>>} */
   async getHeatestIndexes(page_id = 0, faculty_id = 0, query = '', quantity = 0, cursor) {
     
     //呼叫資料庫內的 GET_HEATEST_THREADS_ID 函數
@@ -41,10 +42,10 @@ export class Thread{
     )
 
     const indexes = raw_data[0] || []
-    
-    return indexes.map(i => {return parseInt(i.tid)})
+    return indexes.map(i => i.tid)
   }
 
+  /** @returns {Promise<Array<number>>} */
   async getNewestIndexes(page_id = 0, faculty_id = 0, query = '', quantity = 0, cursor) {
 
     //呼叫資料庫內的 GET_NEWEST_THREADS_ID 函數
@@ -56,8 +57,16 @@ export class Thread{
     )
 
     const indexes = raw_data[0] || []
-    
-    return indexes.map(i => {return parseInt(i.tid)})
+    return indexes.map(i => i.tid)
+  }
+
+  /** @returns {Promise<Array<number>>} */
+  async getUserIndexes(user, quantity, cursor) {
+    const [raw_ids, _] = await this.db.execute(
+      "SELECT `tid` FROM threads WHERE `sender_uid` = ? AND `hidden` = FALSE ORDER BY `create_time` DESC LIMIT ? OFFSET ?",
+      [user.user_id, quantity.toString(), cursor.offset.toString()]
+    )
+    return raw_ids.map(i => i.tid)
   }
 
   async createNew(title, content, user_id, page_id, faculty_id) {
@@ -95,23 +104,4 @@ export class Thread{
     return true
   }
 }
-
-/**
- * @param {number | null} page_id 
- * @param {number | null} faculty_id 
- * @param {"normal" | "blocked" | "all"} visibility 
- * @returns {String}
- */
-function getSqlFilterCode(page_id, faculty_id, visibility) {
-  let conditions = []
-
-  if (page_id != null) conditions.push("t.pid = " + page_id)
-  if (faculty_id != null) conditions.push("t.fid = " + faculty_id)
-
-  if (visibility == 'normal') conditions.push("c.status < 3")
-  if (visibility == 'blocked') conditions.push("c.status > 2")
-
-  return conditions.length ? " WHERE "+ conditions.join(" AND ") : ""
-}
-
   

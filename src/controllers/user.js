@@ -1,6 +1,7 @@
 import { User, SimpleUser, USER_ACTION } from '../models/user.js'
 import { validateRegisterData, validateLoginData, validatePositiveInt } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
+import { OffsetedCursor } from '../utils/pagination.js'
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
@@ -13,7 +14,16 @@ export function getUserData(req, res) {
 
 /** @type {RouteFunction} */
 export function getUserThreads(req, res) {
+  //解析分頁數據
+  const cursor = OffsetedCursor.fromBase64(req.query['cursor'])
 
+  //查詢資料庫並且返回
+  req.db.thread.getUserIndexes(req.target.user, 15, cursor)
+    .then(ids => req.db.thread.getMany(ids))
+    .then(threads => {
+      const new_cursor = threads.length < 15 ? '' : cursor.increaseOffset(threads.length).toBase64()
+      res.send({'threads': threads, 'continuous': new_cursor})
+    }).catch(() => res.status(400).send())
 }
 
 /** @type {RouteFunction} */

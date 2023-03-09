@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { authUser, tryAuthUser } from '../middlewares/authUser.js'
+import { authUser, extractTargetUser, tryAuthUser } from '../middlewares/authUser.js'
 import * as Controller from "../controllers/user.js"
 
 const router = Router()
 
 //獲取用戶資料
-router.get('/:uid', tryAuthUser, Controller.getUserData)
+router.get('/:uid', extractTargetUser, tryAuthUser, Controller.getUserData)
 
 //獲取用戶貼文
-router.get('/:uid/thread', Controller.getUserThreads)
+router.get('/:uid/thread', extractTargetUser, Controller.getUserThreads)
 
 //獲取用戶賬號狀態
 router.get('/state/:sid', Controller.getUserState)
