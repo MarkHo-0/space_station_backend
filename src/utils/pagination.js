@@ -56,7 +56,7 @@ export class OffsetedCursor extends Cursor {
 
   static fromBase64(base64_str = '') {
     const args = this._tryParseArgs(base64_str)
-    return new TimebasedCursor(args[0])
+    return new OffsetedCursor(args[0])
   }
 }
 
