@@ -1,57 +1,43 @@
-@font-face {
-    font-family: 'Lulo Clean';
-    src: url('Lulo Clean W01 One Bold.ttf') format('truetype');
-
+header {
+  display: flex;
+  align-items: center;
+  padding: 10px 5%;
+  top: -10px;
+  left: -5px;
+  position: absolute;
+  background-color: #7c8ec1;
+  width: 100%;
+  color: white;
 }
 
-@font-face {
-    font-family: 'lulo clean one';
-    src: url('Lulo Clean W01 One.ttf') format('truetype');
-}
-
-header{
-    display:flex;
-    align-items:center;
-    padding:10px 5%; 
-    top:-10px;
-    left:-5px;
-    position:absolute;
-    background-color: #7c8ec1;
-    width:100%;
-    color:white;
-    font-family:"Lulo Clean";
-}
-
-b{
-    font-size: 60px ; 
-    font-family: lulo clean one ;
-    text-align: center; 
-    color: rgb(31, 90, 136);
-    position: absolute;
-    top: 40%;
-    left: 39.5%;
-    z-index: 3;
+b {
+  font-size: 60px;
+  text-align: center;
+  color: rgb(31, 90, 136);
+  position: absolute;
+  top: 40%;
+  left: 39.5%;
+  z-index: 3;
 
 }
 
 img {
-    overflow-clip-margin: content-box;
-    overflow: clip;
-    opacity: 0.5;
-    object-position: 300px 300px;
-    z-index: 2;
-    object-fit: contain;
+  overflow-clip-margin: content-box;
+  overflow: clip;
+  opacity: 0.5;
+  object-position: 300px 300px;
+  z-index: 2;
+  object-fit: contain;
 }
 
 .first_item_left {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-  }
-
-
-body{
-    color: white;
-    overflow-x: hidden; 
 }
 
+
+body {
+  color: white;
+  overflow-x: hidden;
+}
