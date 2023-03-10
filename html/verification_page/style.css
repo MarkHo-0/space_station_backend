@@ -26,35 +26,32 @@ b{
     font-size: 60px ; 
     font-family: lulo clean one ;
     text-align: center; 
-    color: white;
+    color: rgb(31, 90, 136);
     position: absolute;
     top: 40%;
     left: 39.5%;
+    z-index: 3;
 
 }
-footer{
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    position:absolute;
-    background-color: #7c8ec1;
-    padding:3px 45%; 
-    width:100%;
-    left:-5px;
-    color:white;
-    font-family:"Lulo Clean";
-    bottom: 0;
-    height:7vh;
+
+img {
+    overflow-clip-margin: content-box;
+    overflow: clip;
+    opacity: 0.5;
+    object-position: 300px 300px;
+    z-index: 2;
+    object-fit: contain;
 }
 
-footer h2{
-    position:absolute;
-    text-align: center;
-    font-family:"Lulo Clean"
-}
+.first_item_left {
+    display: flex;
+    flex-direction: column;
+
+  }
+
 
 body{
-    background-color: rgb(137, 154, 206);
-    overflow-x:hidden; 
-    margin: 8px; 
+    color: white;
+    overflow-x: hidden; 
 }
+
