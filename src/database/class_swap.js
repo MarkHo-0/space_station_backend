@@ -9,17 +9,14 @@ export class ClassSwap {
 
   async getRequest(id) {
     if(typeof id != 'number') return null
-
-    const [sReqs, _] = await this.db.execute("SELECT * FROM class_swap_requests WHERE `id` = ?", [id])
-
+    const [sReqs, _] = await this.db.execute("SELECT * FROM class_swap_requests , courses WHERE `code` = `course_code` AND `id` = ?", [id])
     if (sReqs.length != 1) return null
-
     return ClassSwapRequest.fromDB(sReqs[0]);
   }
 
   async hasRequestBy(user, course_code) {
     const [sReqs, _] = await this.db.execute(
-      "SELECT `id` FROM  class_swap_requests WHERE `requester_uid` = ? AND `course_code` = ?",
+      "SELECT `id` FROM class_swap_requests WHERE `requester_uid` = ? AND `course_code` = ?",
       [user.user_id, course_code]
     )
     return sReqs.length > 0
@@ -38,9 +35,16 @@ export class ClassSwap {
       "SELECT r1.id, `current_class` FROM class_swap_requests AS r1 RIGHT JOIN (SELECT ANY_VALUE(`id`) AS `id`, MIN(`request_on`) FROM class_swap_requests WHERE `course_code` = ? AND `expected_class` = ?  AND `responser_uid` IS NULL GROUP BY `current_class`) AS r2 ON r1.id = r2.id ORDER BY `current_class`",
       [course_code, curr_class]
     )
-    return sReqs.map(function (r) {
-      return {id: r['id'], class_num: r['current_class']}
-    })
+    return sReqs.map(r => {return {'id': r['id'], 'class_num': r['class_num']}})
+  }
+
+  /** @returns {Promise<Array<ClassSwapRequest>>}*/
+  async getSwapRecords(user) {
+    const [sReqs, _] = await this.db.execute(
+      "SELECT * FROM class_swap_requests , courses WHERE `course_code` = `code` AND (`requester_uid` = 1 OR `responser_uid` = 1)",
+      [user.user_id, user.user_id]
+    )
+    return sReqs.map(r => ClassSwapRequest.fromDB(r))
   }
 
   async setResponser(id, user) {

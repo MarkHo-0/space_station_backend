@@ -17,7 +17,7 @@ export async function searchSwapRequest(req, res) {
 
   //如果該科目用戶已發佈該科目的互換請求，則不能再搜索
   if (await req.db.classSwap.hasRequestBy(req.user, code)) {
-    return res.status(400).send('This course had already been requested by you.')
+    return res.status(460).send('This course had already been requested by you.')
   }
 
   //在資料庫進行搜索
@@ -27,8 +27,10 @@ export async function searchSwapRequest(req, res) {
 }
 
 /** @type {RouteFunction} */
-export function viewMyRequests(req, res) {
-
+export function viewSwapRecords(req, res) {
+  req.db.classSwap.getSwapRecords(req.user)
+    .then(reqs => res.send({'requests': reqs.map(r => r.toJSON())}))
+    .catch(_ => res.status(400).send(_))
 }
 
 /** @type {RouteFunction} */
@@ -51,7 +53,7 @@ export async function postSwapRequest(req, res) {
 
   //檢查是否已有相同交換請求
   if (await req.db.classSwap.hasRequestBy(req.user, code)) {
-    return res.status(400).send('This course had already been requested.')
+    return res.status(460).send('This course had already been requested by you.')
   }
 
   //寫入資料庫

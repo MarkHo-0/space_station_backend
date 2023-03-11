@@ -10,8 +10,8 @@ router.use(authUser)
 //搜尋他人發布的交換請求
 router.get('/search', Controller.searchSwapRequest)
 
-//檢視自己的交換請求
-router.get('/request', Controller.viewMyRequests)
+//獲取請求紀錄
+router.get('/record', Controller.viewSwapRecords)
 
 //發布新的交換請求
 router.post('/request', Controller.postSwapRequest)
