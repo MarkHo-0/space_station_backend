@@ -5,6 +5,7 @@ import { getDB } from '../database/index.js'
 import { tryAuthUser } from '../middlewares/authUser.js'
 import { getHomeData } from '../controllers/home.js'
 import { getToolboxStatus } from '../controllers/toolbox.js'
+import { completeCourse } from "../controllers/completion.js";
 import ThreadRoutes from './thread.js'
 import CommentRoutes from './comment.js'
 import UserRoutes from './user.js'
@@ -22,6 +23,7 @@ router.use(mountDB(getDB))
 //路由分發
 router.get('/home', tryAuthUser, getHomeData)
 router.get('/toolbox', getToolboxStatus)
+router.get('/completion/course', completeCourse)
 
 router.use('/thread', ThreadRoutes)
 router.use('/comment', CommentRoutes)
