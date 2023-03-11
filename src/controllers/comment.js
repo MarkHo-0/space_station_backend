@@ -80,15 +80,18 @@ export async function pinOrUnpinComment(req, res) {
     return res.status(403).send()
   }
 
+  let new_pin = null;
+
   //若新的留言編號和舊的頂置編號一致，則代表用戶移除頂置，相反則更新頂置
   if (parent_thread.pinedCommentID == target_comment_id) {
     await req.db.comment.removePinned(parent_thread_id)
   } else {
     await req.db.comment.setPinned(parent_thread_id, target_comment_id)
+    new_pin = target_comment_id
   }
 
   //完成，返回用戶
-  res.send()
+  res.send({'new_pin': new_pin})
 }
 
 const HIDDEN_THRESHORD = 3
