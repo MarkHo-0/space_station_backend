@@ -1,4 +1,4 @@
-import { validateContactInfo, validateCourseCode, validateCursor, validateDiscription, validateGrade, validateInteger, validatePositiveInt, validateString, validateStudyPartnerPostData } from "../utils/dataValidation.js";
+import { validatePositiveInt, validateString, validateStudyPartnerPostData } from "../utils/dataValidation.js";
 import { OffsetedCursor } from "../utils/pagination.js";
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
