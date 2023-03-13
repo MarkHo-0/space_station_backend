@@ -19,6 +19,9 @@ router.post('/request', Controller.postSwapRequest)
 //刪除過往的交換請求
 router.delete('/request/:id', Controller.removeSwapRequest)
 
+//重新發佈過往的交換請求
+router.post('/request/:id/repost', Controller.repostSwapRequest)
+
 //進行交換
 router.post('/swap', Controller.performSwap)
 

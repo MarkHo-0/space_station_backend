@@ -64,10 +64,8 @@ export async function postSwapRequest(req, res) {
 
 /** @type {RouteFunction} */
 export async function removeSwapRequest(req, res) {
-  const request_id = validatePositiveInt(req.params['id'])
-  const swap_request = await req.db.classSwap.getRequest(request_id)
-
   //檢查互換請求是否存在
+  const swap_request = await req.db.classSwap.getRequest(req.params['id'])
   if (swap_request == null) return res.status(404).send()
 
   //只有屬於用戶自己的請求才可進行刪除
@@ -97,6 +95,24 @@ export async function performSwap(req, res) {
   req.db.classSwap.setResponser(request_id, req.user)
     .then(() => res.send(swap_request.toJSON()))
     .catch(() => res.status(400).send())  
+}
+
+/** @type {RouteFunction} */
+export async function repostSwapRequest(req, res) {
+  //檢查互換請求是否存在
+  const swap_request = await req.db.classSwap.getRequest(req.params['id'])
+  if (swap_request == null) return res.status(404).send()
+
+  //只有屬於用戶自己的請求才可進行重新發佈
+  if (swap_request.isRequestBy(req.user) == false) return res.status(403).send()
+
+  //只有已進行過互換的請求才可重新發佈
+  if (swap_request.isSwapped == false) return res.status(460).send()
+
+  //更新資料庫
+  req.db.classSwap.resetRequest(swap_request)
+    .then(_ => res.send())
+    .catch(_ => res.status(400).send())
 }
 
 

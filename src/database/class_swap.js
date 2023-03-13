@@ -8,7 +8,7 @@ export class ClassSwap {
   }   
 
   async getRequest(id) {
-    if(typeof id != 'number') return null
+    if(Number.isInteger(id) == false) return null
     const [sReqs, _] = await this.db.execute("SELECT * FROM class_swap_requests , courses WHERE `code` = `course_code` AND `id` = ?", [id])
     if (sReqs.length != 1) return null
     return ClassSwapRequest.fromDB(sReqs[0]);
@@ -55,5 +55,10 @@ export class ClassSwap {
   async removeRequest(id){
     await this.db.execute ("DELETE FROM class_swap_requests WHERE `id` = ?", [id])
     return true
+  }
+
+  async resetRequest(request) {
+    await this.db.execute("UPDATE class_swap_requests SET `responser_uid` = NULL, `response_on` = NULL, `request_on` = NOW() WHERE `id` = ?", [request.id])
+    return;
   }
 }
