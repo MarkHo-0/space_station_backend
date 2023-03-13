@@ -11,6 +11,7 @@ import CommentRoutes from './comment.js'
 import UserRoutes from './user.js'
 import VerifyRoutes from './verify.js'
 import ClassSwapRoutes from './class_swap.js'
+import StudyPartnerRoutes from './study_partner.js'
 
 const router = Router()
 
@@ -28,6 +29,7 @@ router.get('/completion/course', completeCourse)
 router.use('/thread', ThreadRoutes)
 router.use('/comment', CommentRoutes)
 router.use('/classswap', ClassSwapRoutes)
+router.use('/studypartner', StudyPartnerRoutes)
 router.use('/user', UserRoutes)
 router.use('/vfcode', VerifyRoutes)
 
