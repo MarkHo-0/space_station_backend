@@ -1,7 +1,8 @@
 import { User, SimpleUser, USER_ACTION } from '../models/user.js'
-import { validateRegisterData, validateLoginData, validatePositiveInt } from '../utils/dataValidation.js'
+import { validateRegisterData, validateLoginData, validatePositiveInt, validateNickname } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
 import { OffsetedCursor } from '../utils/pagination.js'
+import { timeDiffWithCurr } from '../utils/parseTime.js'
 
 /** @typedef {import('../types/express.js').RouteFunction} RouteFunction */
 
@@ -106,17 +107,24 @@ export function userLogout(req, res) {
 
 /** @type {RouteFunction} */
 export async function updateUserNickname(req, res) {
-  const { nickname } = validateRegisterData(req.body)
-  if ( !nickname ) {
-    return res.status(422).send('Invalid Inputs.')
+  const newName = validateNickname(req.body["nickname"])
+  if (!newName) return res.status(422).send()
+
+  const oldData = await req.db.user.getNickNameData(req.user)
+
+  //檢查是否和舊的名字一樣
+  if (oldData.nickname = newName) return res.status(422).send()
+
+  //如果更改間隔過短 (一星期只能改一次)，則阻止更改
+  const updateInterval = 7 * 24 * 60 * 60 
+  if (timeDiffWithCurr(oldData.last_update) < updateInterval) {
+    res.status(460).send()
   }
 
-  if (await req.db.user.getUserData(sid)) {
-    return res.status(400).send('nickname already exist.')
-  }
-  req.db.user.updateNickname(user)
-    .then(_ => res.send('nickname changed successful'))
-    .catch(_ => res.status(400).send('nickname change falied due to unknown reason. Please try again.'))
+  //寫入資料庫
+  req.db.user.updateNickname(req.user, newName)
+    .then(_ => res.send())
+    .catch(_ => res.status(400).send())
 }
 
 /** @type {RouteFunction} */

@@ -6,3 +6,7 @@ export function jsDate2unixTime(jsDate) {
 export function getCurrentUnixTime() {
   return parseInt(Date.now() / 1000)
 }
+
+export function timeDiffWithCurr(oldTime = new Date()) {
+  return Math.abs(getCurrentUnixTime() - jsDate2unixTime(oldTime))
+}

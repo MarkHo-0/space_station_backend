@@ -77,9 +77,17 @@ export class User{
     return true
   }
 
-  async updateNickname(uid, newName) {
-    await this.db.execute("UPDATE users SET `nickname` = ?, `last_update` = NOW() WHERE `uid` = ? ", [newName, uid])
-    return true
+  async getNickNameData(user) {
+    const [data, _] = await this.db.execute("SELECT * FROM users WHERE `uid` = ?", [user.user_id])
+    return {
+      nickname: String(data[0]["nickname"]),
+      last_update: new Date(data[0]["last_update"])
+    }
+  }
+
+  async updateNickname(user, newName) {
+    await this.db.execute("UPDATE users SET `nickname` = ?, `last_update` = NOW() WHERE `uid` = ? ", [newName, user.user_id])
+    return;
   }
 
   async updadeFaculty(uid, newFid) {
