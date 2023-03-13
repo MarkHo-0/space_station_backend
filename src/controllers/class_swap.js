@@ -48,7 +48,7 @@ export async function postSwapRequest(req, res) {
   }
 
   //校驗聯絡資料
-  const contact = validateContactInfo(req.body)
+  const contact = validateContactInfo(req.body.contact)
   if (!contact) return res.status(422).send('Invalid Contact Info')
 
   //檢查是否已有相同交換請求
