@@ -6,6 +6,7 @@ import { Comment } from './comment.js';
 import { News } from './news.js'
 import { Course } from './course.js'
 import { ClassSwap } from './class_swap.js'
+import { StudyPartner } from './study_partner.js'
 import { Setting } from './setting.js'
 
 /** @type {import('../types/database.js').DataBaseModel} */
@@ -37,6 +38,7 @@ export async function connect() {
       'news': new News(connection),
       'course': new Course(connection),
       'classSwap': new ClassSwap(connection) ,
+      'studyPartner': new StudyPartner(connection) ,
       'setting': new Setting(connection),
     }
   } catch (error) {

@@ -1,5 +1,6 @@
 import { Course } from "../models/course.js";
 import { StudyPartnerPost } from "../models/study_partner_post.js";
+import { getDB } from "./index.js";
 
 export class StudyPartner {
     constructor(connection) {
@@ -7,42 +8,58 @@ export class StudyPartner {
         this.db = connection
     }
 
-    async createPost(user, course, aimed_Grade, discription, contact) {
-        await this.db.execute (
-            "INSERT INTO class_swap_requests (`publisher_uid`, `contact_method`, `contact_detail`, `course_code`, `aimed_Grade`,`discription`) VALUE (?, ?, ?, ?, ?, ?)", 
-            [user.user_id, contact.method, contact.detail, course.course_code, aimed_Grade, discription]
-        )
-        return true
+    async createPost(user, course, aimed_grade, description, contact) {
+      await this.db.execute(
+          "INSERT INTO study_partner_posts (`publisher_uid`, `contact_method`, `contact_detail`, `course_code`, `aimed_grade`,`description`) VALUE (?, ?, ?, ?, ?, ?)", 
+          [user.user_id, contact.method, contact.detail, course.code, aimed_grade, description]
+      )
+      return true
     }
 
-    /**
-     * @param { String } keyword 
-     * @param { Array<Course> } courses 
-     * @returns { Promise<StudyPartnerPost> }
-     */
-    async searchPosts(keyword, courses) {
-        const course_codes = '(' + courses.map(c => c.code).join(',') + ')'
-        const [raw_posts, _] = await this.db.execute("SELECT * FROM study_partner_posts WHERE (? = '()' OR course_code IN ?) OR discription LIKE %?%", [course_codes, course_codes, keyword]);
+    /** @returns { Promise<Array<StudyPartnerPost>> }*/
+    async getPosts(keyword, quantity = 10, cursor) {
+      let kewordFilter = '';
+      if (keyword != null) {
+        let courseFilter = ''
+        const courses = await getDB().course.queryMany(keyword);
+        if (courses.length > 0) {
+          courseFilter = ` OR p.course_code IN (${courses.map(c => `'${c.code}'`).join(',')})`
+        }
+        kewordFilter = ` (p.description LIKE '%${keyword}%'${courseFilter}) AND`
+      }
+      
+      const [raw_posts, _] = await this.db.execute(
+        `SELECT * FROM study_partner_posts p, courses c WHERE${kewordFilter} p.course_code = c.code ORDER BY publish_time DESC LIMIT ? OFFSET ?`,
+        [quantity.toString(), cursor.offset.toString()]
+      );
 
-        return raw_posts.map(p => StudyPartnerPost.fromDB(p))
+      return raw_posts.map(p => StudyPartnerPost.fromDB(p))
     }
 
     async removePost(publish_id) {
-        await this.db.execute ("DELETE FROM study_partner_posts WHERE `id` = ?", [publish_id])
-        return true
+      await this.db.execute("DELETE FROM study_partner_posts WHERE `id` = ?", [publish_id])
+      return true
     }   
 
     async getPost(publish_id) {
-        const [raw,_] = await this.db.execute ("SELECT * FROM study_partner_posts WHERE `id` = ?",[publish_id])
-        return StudyPartnerPost.fromDB(raw)
+      const [raw_posts,_] = await this.db.execute("SELECT * FROM study_partner_posts WHERE `id` = ?",[publish_id])
+      return StudyPartnerPost.fromDB(raw_posts)
     }
 
     async isPostBelongsToUser(post_id, user) {
-        const [post_id, _] = await this.db.execute("SELECT `id` FROM study_partner_posts WHERE `id` = ? AND `publisher_uid` = ?")
-        return post_id.length == 1
+      if (Number.isInteger(post_id) == false) return false
+      const [post, _] = await this.db.execute(
+        "SELECT `id` FROM study_partner_posts WHERE `id` = ? AND `publisher_uid` = ?",
+        [post_id, user.user_id]
+      )
+      return post.length == 1
     }
 
-    async editPost(course, aimed_Grade, discription, contact) {
-        await this.db.execute ("UPDATE FROM study_partner_posts (`contact_method`, `contact_detail`, `course`, `aimed_Grade`, `discription`) VALUES(?, ?, ?, ?) WHERE publish_id = ? ", [contact.method, contact.detail, course, aimed_Grade, discription])
+    async editPost(post_id, course, aimed_Grade, description, contact) {
+      await this.db.execute(
+        "UPDATE study_partner_posts SET `course_code` = ?, `aimed_grade` = ?, `description` = ?, `contact_method` = ?, `contact_detail` = ? WHERE `id` = ?", 
+        [course.code, aimed_Grade, description, contact.method, contact.detail, post_id]
+      )
+      return;
     }
 }

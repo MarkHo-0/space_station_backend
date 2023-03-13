@@ -3,12 +3,12 @@ import { ContactInfo } from './contactInfo.js'
 import { Course } from './course.js'
 
 export class StudyPartnerPost {
-    constructor({publish_id, publisher_uid, contact, course, aimed_Grade, discription}) {
+    constructor({publish_id, publisher_uid, contact, course, aimed_Grade, description}) {
     /** @type {number} */ this.id = publish_id
     /** @type {number} */ this.publisherUID = publisher_uid
     /** @type {Course} */ this.course = course
     /** @type {number} */ this.aimedGrade = aimed_Grade
-    /** @type {String} */ this.discription = discription
+    /** @type {String} */ this.description = description
     /** @type {ContactInfo} */ this.contact = contact
     }
 
@@ -25,21 +25,20 @@ export class StudyPartnerPost {
         publish_id: d['id'],
         publisher_uid: d['publisher_uid'],
         contact: new ContactInfo(d['contact_method'], d['contact_detail']),
-        course: d['course'],
-        aimed_Grade: d['aimed_grade'],
-        discription: d['discription']
-
+        course: Course.fromDB(d),
+        aimed_grade: d['aimed_grade'],
+        description: d['description']
       })
     }
 
-      toJSON() {
-        return {
+    toJSON() {
+      return {
         id: this.id,
         publisher_uid: this.publisherUID,
         course: this.course.toJSON(),
         aimed_Grade: this.aimedGrade,
-        discription: this.discription,
+        description: this.description,
         contact: this.contact.toJSON()
-        }
-     }
+      }
+    }
 }
