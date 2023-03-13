@@ -103,9 +103,9 @@ export class User{
     return;
   }
 
-  async updadeFaculty(uid, newFid) {
-    await this.db.execute("UPDATE users_info SET `fid` = ? WHERE `uid` = ? " , [newFid, uid ])
-    return true
+  async updadeFaculty(user, newFid) {
+    await this.db.execute("UPDATE users_info SET `fid` = ? WHERE `uid` = ? ", [newFid, user.user_id])
+    return;
   }
 
   async updadePassword(student_id, new_pwd) {

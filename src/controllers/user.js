@@ -1,5 +1,5 @@
 import { User, SimpleUser, USER_ACTION } from '../models/user.js'
-import { validateRegisterData, validateLoginData, validatePositiveInt, validateNickname, validateHashedPassword } from '../utils/dataValidation.js'
+import { validateRegisterData, validateLoginData, validatePositiveInt, validateNickname, validateHashedPassword, validateFacultyID } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
 import { OffsetedCursor } from '../utils/pagination.js'
 import { timeDiffWithCurr } from '../utils/parseTime.js'
@@ -132,14 +132,12 @@ export async function updateUserNickname(req, res) {
 
 /** @type {RouteFunction} */
 export async function updateUserFaculty(req, res) {
-  const { Faculty } = validateRegisterData(req.body)
-  if ( !Faculty ) {
-    return res.status(422).send('Invalid Inputs.')
-  }
+  const faculty_id = validateFacultyID(req.body['new_faculty_id'])
+  if (!faculty_id) return res.status(422).send()
   
-  req.db.user.updateFaculty(user)
-    .then(_ => res.send('Faculty changed successful'))
-    .catch(_ => res.status(400).send('Faculty change falied due to unknown reason. Please try again.'))
+  req.db.user.updadeFaculty(req.user, faculty_id)
+    .then(_ => res.send())
+    .catch(_ => res.status(400).send())
 }
 
 /** @type {RouteFunction} */
