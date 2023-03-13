@@ -28,4 +28,7 @@ router.patch('/faculty', authUser, Controller.updateUserFaculty)
 //更改用戶名稱
 router.patch('/nickname', authUser, Controller.updateUserNickname)
 
+//更改用戶名稱
+router.patch('/pwd', authUser, Controller.updateUserPassword)
+
 export default router;

@@ -33,6 +33,12 @@ export class User{
     if (raw_user.length !== 1) return null
     return DetailedUser.fromDB(raw_user[0])
   }
+
+  async getStudentID(user) {
+    const [raw_id, _] = await this.db.execute("SELECT `sid` FROM users_info WHERE `uid` = ?", [user.user_id])
+    if (raw_id.length !== 1) return null
+    return Number(raw_id[0]['sid'])
+  }
   
   async decryptToken(token) {
     const [raw_data, _] = await this.db.execute(
@@ -61,6 +67,11 @@ export class User{
   async removeLoginState(token) {
     await this.db.execute("DELETE FROM users_login_info WHERE `token` = UNHEX(?)", [token])
     return true
+  }
+
+  async removeAllLoginStates(user) {
+    await this.db.execute("DELETE FROM users_login_info WHERE `uid` = ?", [user.user_id])
+    return;
   }
 
   async isSidAndPwdMatched(sid, pwd) {
@@ -95,6 +106,14 @@ export class User{
   async updadeFaculty(uid, newFid) {
     await this.db.execute("UPDATE users_info SET `fid` = ? WHERE `uid` = ? " , [newFid, uid ])
     return true
+  }
+
+  async updadePassword(student_id, new_pwd) {
+    await this.db.execute(
+      "UPDATE users_pwd SET `hashed_pwd` = UNHEX(?), `last_update` = NOW(), `should_change` = FALSE WHERE `sid` = ?" ,
+      [new_pwd, student_id]
+    )
+    return;
   }
 
   async getVerificationData(sid) {

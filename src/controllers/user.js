@@ -1,5 +1,5 @@
 import { User, SimpleUser, USER_ACTION } from '../models/user.js'
-import { validateRegisterData, validateLoginData, validatePositiveInt, validateNickname } from '../utils/dataValidation.js'
+import { validateRegisterData, validateLoginData, validatePositiveInt, validateNickname, validateHashedPassword } from '../utils/dataValidation.js'
 import { generateToken } from '../utils/loginToken.js'
 import { OffsetedCursor } from '../utils/pagination.js'
 import { timeDiffWithCurr } from '../utils/parseTime.js'
@@ -140,6 +140,23 @@ export async function updateUserFaculty(req, res) {
   req.db.user.updateFaculty(user)
     .then(_ => res.send('Faculty changed successful'))
     .catch(_ => res.status(400).send('Faculty change falied due to unknown reason. Please try again.'))
+}
+
+/** @type {RouteFunction} */
+export async function updateUserPassword(req, res) {
+  const old_pwd = validateHashedPassword(req.body['old_pwd'])
+  const new_pwd = validateHashedPassword(req.body['new_pwd'])
+  if (!old_pwd || !new_pwd || new_pwd == old_pwd) res.status(422).send()
+
+  const student_id = await req.db.user.getStudentID(req.user) 
+  if ((await req.db.user.isSidAndPwdMatched(student_id, old_pwd)) == false) {
+    return res.status(460).send()
+  }
+  
+  req.db.user.updadePassword(student_id, new_pwd)
+    .then(_ => req.db.user.removeAllLoginStates(req.user))
+    .then(_ => res.send())
+    .catch(e => res.status(400).send(e))
 }
 
 
