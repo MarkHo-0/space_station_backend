@@ -1,45 +1,39 @@
+import { jsDate2unixTime } from "../utils/parseTime.js"
+
 export class User{
-    id = 0
-    /** @type {SimpleUser} */
-    basic_info = null
-    gender_id = 1
-    student_id = 0
-    faculty_id = 0
-    create_time = 0
-    thread_count = 0
-    comment_count = 0
-    
-    constructor(id, nickname, gender_id, student_id, faculty_id, create_time) {
-        this.basic_info = new SimpleUser(id, nickname)
-        this.gender_id = gender_id
-        this.student_id = student_id
-        this.faculty_id = faculty_id
-        this.create_time = create_time
-    }
+  constructor({id, nickname, student_id, faculty_id, create_time, thread_count, comment_count}) {
+    /** @type {number} */ this.userID = id
+    /** @type {string} */ this.nickname = nickname
+    /** @type {number} */ this.studentID = student_id
+    /** @type {number | null} */ this.facultyID = faculty_id
+    /** @type {Date} */ this.createTime = create_time
+    /** @type {number} */ this.threadCount = thread_count
+    /** @type {number} */ this.commentCount = comment_count
+  }
 
-    get nickname() {
-        return this.basic_info.nickname
-    }
+  static fromDB(d) {
+    return new User({
+      id: d["uid"],
+      nickname: d["nickname"],
+      student_id: d["sid"],
+      faculty_id: d["fid"],
+      create_time: new Date(d["create_time"]),
+      thread_count: d["thread_count"],
+      comment_count: d["comment_count"]
+    })
+  }
 
-    get user_id() {
-        return this.basic_info.user_id
+  toJSON(hideSensitiveData = true) {
+    return {
+      uid: this.userID,
+      nickname: this.nickname,
+      create_time: jsDate2unixTime(this.createTime),
+      sid: hideSensitiveData ? null : this.studentID,
+      fid: this.facultyID,
+      thread_count: this.threadCount,
+      comment_count: this.commentCount
     }
-
-    toJSON() {
-        return {
-            basic_info: this.basic_info.toJSON(),
-            gender: this.gender_id,
-            create_time: this.create_time,
-            sid: this.create_time,
-            fid: this.faculty_id,
-            thread_count: this.thread_count,
-            comment_count: this.thread_count
-        }
-    }
-}
-
-export function UserFromDB(d) {
-  return new User() //TODO: 完成資料填充
+  }
 }
 
 export class SimpleUser {

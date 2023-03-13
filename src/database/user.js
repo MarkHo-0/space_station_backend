@@ -1,4 +1,4 @@
-import { SimpleUser, UserFromDB } from '../models/user.js'
+import { SimpleUser, User as DetailedUser } from '../models/user.js'
     
 export class User{
 
@@ -28,8 +28,10 @@ export class User{
     return SimpleUser.fromDB(raw_user[0])
   }
 
-  async getDetailedOne(uid) {
-    return UserFromDB()
+  async getDetailedOne(user_id) {
+    const [raw_user, _] = await this.db.execute( "SELECT i.*, u.nickname FROM users_info i, users u WHERE u.uid = i.uid AND i.uid = ?", [user_id])
+    if (raw_user.length !== 1) return null
+    return DetailedUser.fromDB(raw_user[0])
   }
   
   async decryptToken(token) {

@@ -10,7 +10,10 @@ const TOKEN_VALID_DAYS = 182
 
 /** @type {RouteFunction} */
 export function getUserData(req, res) {
-
+  const hideSensitive = req.user?.user_id != req.target.user.user_id
+  req.db.user.getDetailedOne(req.target.user.user_id)
+    .then(user => res.send(user.toJSON(hideSensitive)))
+    .catch(_ => res.status(400).send())
 }
 
 /** @type {RouteFunction} */

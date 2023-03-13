@@ -5,7 +5,7 @@ import * as Controller from "../controllers/user.js"
 const router = Router()
 
 //獲取用戶資料
-router.get('/:uid', extractTargetUser, tryAuthUser, Controller.getUserData)
+router.get('/:uid', tryAuthUser, extractTargetUser, Controller.getUserData)
 
 //獲取用戶貼文
 router.get('/:uid/thread', extractTargetUser, Controller.getUserThreads)
