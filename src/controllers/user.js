@@ -89,6 +89,7 @@ export async function userLogin(req, res) {
 
   //獲取用戶資料以及生成令牌
   const user = await req.db.user.getOneBySID(sid)
+  const user_info = await req.db.user.getDetailedOne(user.user_id)
   const token = generateToken(sid)
 
   //將令牌資料寫入資料庫，成功後返回用戶相關訊息
@@ -96,7 +97,7 @@ export async function userLogin(req, res) {
     res.send({
       "token": token,
       "valid_time": TOKEN_VALID_DAYS,
-      "user": user.toJSON()
+      "user": user_info.toJSON(false)
     })
   ).catch(_ => res.status(400).send())
 }
