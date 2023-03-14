@@ -37,9 +37,10 @@ export class Comment{
     return Promise.all(
       raw_comments.map(async (raw_comment) => {
         const comment = CommentModel.fromDB(raw_comment)
+        let curr_depth = reply_depth
 
-        if (reply_depth > 0 && comment.replytoCommentID != null) {
-          const reply = await this.getOne(comment.replytoCommentID, user_id, reply_depth -= 1)
+        if (curr_depth > 0 && comment.replytoCommentID != null) {
+          const reply = await this.getOne(comment.replytoCommentID, user_id, curr_depth -= 1)
           comment.setReplyToModel(reply)
         }
 

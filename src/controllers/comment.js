@@ -41,7 +41,7 @@ export function getComment(req, res) {
 
 /** @type {RouteFunction} */
 export async function reactComment(req, res) {
-  const new_reaction = validateRreactionType(req.query['type'])
+  const new_reaction = validateRreactionType(req.body['type'])
   if(!new_reaction) return res.status(422).send()
 
   const comment_id = req.target.comment.id
@@ -54,13 +54,13 @@ export async function reactComment(req, res) {
 
     //檢查是否需要新增互動，如否則返回
     if (new_reaction == old_reaction) {
-      return res.send({"new_reaction": 0})
+      return res.send({"final_reaction": 0})
     }
   }
   
   //寫入新的互動紀錄
   req.db.comment.createReaction(comment_id, user_id, new_reaction)
-    .then(_ => res.send({new_reaction}))
+    .then(_ => res.send({"final_reaction": new_reaction}))
     .catch(_ => res.status(400).send('UNKNOWN ERROR'))
 }
 
