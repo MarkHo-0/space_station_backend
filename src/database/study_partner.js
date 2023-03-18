@@ -38,13 +38,8 @@ export class StudyPartner {
 
     async removePost(publish_id) {
       await this.db.execute("DELETE FROM study_partner_posts WHERE `id` = ?", [publish_id])
-      return true
-    }   
-
-    async getPost(publish_id) {
-      const [raw_posts,_] = await this.db.execute("SELECT * FROM study_partner_posts WHERE `id` = ?",[publish_id])
-      return StudyPartnerPost.fromDB(raw_posts)
-    }
+      return;
+    } 
 
     async isPostBelongsToUser(post_id, user) {
       if (Number.isInteger(post_id) == false) return false
@@ -61,5 +56,14 @@ export class StudyPartner {
         [course.code, aimed_Grade, description, contact.method, contact.detail, post_id]
       )
       return;
+    }
+
+     /** @returns { Promise<Array<StudyPartnerPost>> }*/
+    async getPostsByUser(user) {
+      const [raw_posts,_] = await this.db.execute(
+        "SELECT * FROM study_partner_posts p, courses c WHERE p.publisher_uid = ? AND p.course_code = c.code",
+        [user.user_id]
+      )
+      return raw_posts.map(p => StudyPartnerPost.fromDB(p))
     }
 }

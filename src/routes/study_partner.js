@@ -19,4 +19,7 @@ router.delete('/post/:id', Controller.removeStudyPartnerPost)
 //編輯過往的招聘
 router.patch('/post/:id', Controller.editStudyPartnerPost)
 
+//獲取個人發佈紀錄
+router.get('/record', Controller.viewPostRecords)
+
 export default router

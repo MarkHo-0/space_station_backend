@@ -9,7 +9,7 @@ export async function getPosts(req, res) {
 
   req.db.studyPartner.getPosts(keyword, 10, cursor)
     .then(posts => res.send({
-      'results': posts.map(p => p.toJSON()),
+      'posts': posts.map(p => p.toJSON()),
       'continuous': posts.length < 10 ? '' : cursor.increaseOffset(posts.length).toBase64()
     }))
     .catch((e) => res.status(400).send(e))
@@ -58,5 +58,12 @@ export async function removeStudyPartnerPost(req, res) {
   //在資料庫中刪除該項貼文
   req.db.studyPartner.removePost(post_id)
     .then(() => res.send())
-    .catch((e) => res.status(400).send(e))  
+    .catch(e => res.status(400).send(e))  
+}
+
+/** @type {RouteFunction} */
+export async function viewPostRecords(req, res) {
+  req.db.studyPartner.getPostsByUser(req.user)
+    .then(posts => res.send({'posts': posts.map(p => p.toJSON())}))
+    .catch(e => res.status(400).send(e))
 }
