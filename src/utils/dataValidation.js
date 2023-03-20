@@ -1,4 +1,4 @@
-import { ContactInfo } from '../models/contactInfo.js'
+import { ContactInfo, C_METHOD } from '../models/contactInfo.js'
 
 export function validateRegisterData({sid, nickname, pwd}) {
   return {
@@ -56,14 +56,33 @@ export function validateStudyPartnerPostData({course_code, aimed_grade, descript
     "course_code": validateCourseCode(course_code),
     "aimed_grade": validateGrade(aimed_grade), 
     "description": validateString(description, 1, 1000),
-    "contact": contact == null ? null : validateContactInfo(contact),
+    "contact": validateContactInfo(contact),
   }
 }
 
+
 export function validateContactInfo({method, detail}) {
-  const contact = new ContactInfo(method, detail)
-  if (contact.isValid == false) return null
-  return contact
+  const _method = validateInteger(method, 1, 6)
+  let _detail = null;
+  if (_method == null) return null
+  switch (_method) {
+    case C_METHOD.SCHOOL_EMAIL:
+       _detail = validateSID(detail)?.toString() || null
+      break;
+    case C_METHOD.PRIVATE_EMAIL:
+      const email_checker = /^[\w-\.]{2,80}@([\w-]{2,6}\.)+[\w-]{2,4}$/
+      _detail = validateStringWithRegex(email_checker, detail)
+      break;
+    case C_METHOD.WHATSAPP:
+      const phone_checker = /^\+852\s[2-9][0-9]{7}$|^\+86\s[1-8][0-9]{9,10}$|^\+886\s9[0-9]{8}$/
+      _detail = validateStringWithRegex(phone_checker, detail)
+      break;
+    default:
+      _detail = validateString(detail, 2, 100)
+      break;
+  }
+  if (_detail == null) return null
+  return new ContactInfo(_method, detail)
 }
 
 export function validateFacultyID(fid) { return validateInteger(fid, 0, 6) }
@@ -84,8 +103,9 @@ export function validateDeviceName(device_name) { return validateString(device_n
 export function validateThreadQueryText(text) { return validateString(text, 1, 10) }
 
 export function validateGrade(grade) {return validateInteger(grade, 0, 10)}
+
+const courseCode_checker = new RegExp('[A-Za-z]{4}[0-9]{4}')
 export function validateCourseCode(code) {
-  const courseCode_checker = new RegExp('CC[A-Za-z]{2}[0-9]{4}')
   return validateStringWithRegex(courseCode_checker, code)?.toUpperCase() || null
 }
 

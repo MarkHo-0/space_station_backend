@@ -20,7 +20,7 @@ export async function postStudyPartnerPost(req, res) {
   //校驗科目代號
   const {course_code, aimed_grade, description, contact} = validateStudyPartnerPostData(req.body)
   const course = await req.db.course.getOne(course_code)
-  if (!course || !aimed_grade || !description || !contact) {
+  if (!course || aimed_grade == null || !description || !contact) {
     return res.status(422).send()
   }
 
@@ -39,7 +39,7 @@ export async function editStudyPartnerPost(req, res) {
 
   const {course_code, aimed_grade, description, contact } = validateStudyPartnerPostData(req.body)
   const course = await req.db.course.getOne(course_code)
-  if (!course || !aimed_grade || !description || !contact) {
+  if (!course || aimed_grade == null || !description || !contact) {
     return res.status(422).send()
   }
 
