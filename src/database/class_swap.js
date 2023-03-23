@@ -35,7 +35,7 @@ export class ClassSwap {
       "SELECT r1.id, `current_class` FROM class_swap_requests AS r1 RIGHT JOIN (SELECT ANY_VALUE(`id`) AS `id`, MIN(`request_on`) FROM class_swap_requests WHERE `course_code` = ? AND `expected_class` = ?  AND `responser_uid` IS NULL GROUP BY `current_class`) AS r2 ON r1.id = r2.id ORDER BY `current_class`",
       [course_code, curr_class]
     )
-    return sReqs.map(r => {return {'id': r['id'], 'class_num': r['class_num']}})
+    return sReqs.map(r => {return {'id': r['id'], 'class_num': r['current_class']}})
   }
 
   /** @returns {Promise<Array<ClassSwapRequest>>}*/
