@@ -1,5 +1,7 @@
 import { Course as CourseModel } from '../models/course.js'
 
+const noChineseChars = /^[a-zA-Z\d\s]+$/
+
 export class Course {
 
   constructor(connection) {
@@ -9,6 +11,7 @@ export class Course {
   
   /** @returns {Promise<Array<CourseModel>>} */
   async queryMany(query_string = "", max_quantity = 5) {
+    if (noChineseChars.test(query_string) == false) return [];
     query_string = '%' + query_string.toLocaleLowerCase() + '%'
     const [raw_courses, _] = await this.db.execute(
       "SELECT * FROM courses WHERE `code` LIKE ? OR LOWER(`name`) LIKE ? LIMIT ?", 
