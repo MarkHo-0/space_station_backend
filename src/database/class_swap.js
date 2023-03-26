@@ -41,7 +41,7 @@ export class ClassSwap {
   /** @returns {Promise<Array<ClassSwapRequest>>}*/
   async getSwapRecords(user) {
     const [sReqs, _] = await this.db.execute(
-      "SELECT * FROM class_swap_requests , courses WHERE `course_code` = `code` AND (`requester_uid` = 1 OR `responser_uid` = 1)",
+      "SELECT * FROM class_swap_requests , courses WHERE `course_code` = `code` AND (`requester_uid` = ? OR `responser_uid` = ?)",
       [user.user_id, user.user_id]
     )
     return sReqs.map(r => ClassSwapRequest.fromDB(r))
