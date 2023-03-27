@@ -1,6 +1,6 @@
 FROM node:19
 
-EXPOSE 3000
+EXPOSE 80
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

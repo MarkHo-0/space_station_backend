@@ -19,9 +19,9 @@ console.log('Connected to Email Server')
 //初始化路由
 const app = express();
 app.use(express.json())
-app.use('/api', API_ROUTES)
+app.use(API_ROUTES)
 
-app.listen(3000)
+app.listen(80)
 
 //初始化管理器
 await initManagers()

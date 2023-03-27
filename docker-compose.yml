@@ -23,7 +23,8 @@ services:
     ports:
       - "$ADMIN_PORT:80"
     environment:
-      PMA_HOST: db
+      - PMA_HOST=db
+      - PMA_ABSOLUTE_URI="https://$DOMAIN/admin/"
   app:
     container_name: AppServer
     depends_on:
@@ -32,7 +33,7 @@ services:
     restart: unless-stopped
     env_file: ./.env
     ports:
-      - "$APP_PORT:3000"
+      - "$APP_PORT:80"
     environment:
       - DB_HOST=db
       - DB_USER=$DB_USER
@@ -41,6 +42,24 @@ services:
       - DB_PORT=$DB_PORT
       - EMAIL_USER=$EMAIL_USER
       - EMAIL_PWD=$EMAIL_PWD
+  nginx:
+    container_name: Router
+    image: jonasal/nginx-certbot:4.2.0
+    restart: unless-stopped
+    environment:
+      - CERTBOT_EMAIL=$EMAIL_USER
+    env_file: ./.env
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/secrets:/etc/letsencrypt
+      - ./nginx/conf:/etc/nginx/user_conf.d:ro
+      - ./html/app_introduction_website:/usr/share/nginx/html:ro
+    depends_on:
+      - phpmyadmin
+      - app
 
 volumes:
   db_data:
+  nginx_secrets:
