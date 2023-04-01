@@ -72,7 +72,7 @@ export async function userRegister(req, res) {
 
   //創建用戶並加入資料庫
   req.db.user.createOne(sid, nickname, pwd)
-    .then(_ => res.send('Registration successful'))
+    .then(_ => res.send())
     .catch(_ => res.status(400).send('Register falied due to unknown reason.'))
 }
 
