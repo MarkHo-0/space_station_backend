@@ -7,13 +7,13 @@ export async function validateComment(req, res, next) {
   const comment_id = validatePositiveInt(req.params['cid'])
 
   if (!comment_id) {
-    return res.status(404).send('Comment ID Invalid.')
+    return res.status(404).send()
   }
 
   const comment = await req.db.comment.getOne(comment_id, req.user.user_id)
 
   if (!comment || comment.isHidden) {
-    return res.status(404).send('Comment not Found or Unavailable.')
+    return res.status(404).send()
   }
 
   req.target = {comment}
@@ -25,13 +25,13 @@ export async function validateThread(req, res, next) {
   const thread_id = validatePositiveInt(req.params['tid'])
 
   if (!thread_id) {
-    return res.status(404).send('Thread ID Invalid.')
+    return res.status(404).send()
   }
 
   const thread = await req.db.thread.getOne(thread_id)
 
   if (!thread || thread.isHidden) {
-    return res.status(404).send('Thread not Found or Unavailable.')
+    return res.status(404).send()
   }
 
   req.target = {thread}

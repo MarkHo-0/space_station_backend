@@ -2,7 +2,7 @@ import { SimpleUser } from "./user.js"
 import { Comment } from "./comment.js"
 import { jsDate2unixTime } from "../utils/parseTime.js"
 export class Thread {
-    constructor({id, pid, fid, title, content_cid, create_time, last_update_time, sender, stats, pinned_cid, status}) {
+    constructor({id, pid, fid, title, content_cid, create_time, last_update_time, sender, stats, pinned_cid, hidden}) {
         /** @type {number} */ this.id = id
         /** @type {number} */ this.pageID = pid
         /** @type {number} */ this.facultyID = fid
@@ -10,10 +10,10 @@ export class Thread {
         /** @type {Date} */ this.lastUpdateTime = last_update_time
         /** @type {String} */ this.title = title
         /** @type {SimpleUser} */ this.sender = sender
-        /** @type {number} */ this.status = status
         /** @type {number} */ this.contentCommentID = content_cid
         /** @type {number | null} */ this.pinedCommentID = pinned_cid
         /** @type {number} */ this.stats = stats
+        /** @type {boolean} */ this.isHidden = hidden
     }
 
     toJSON() {
@@ -35,10 +35,6 @@ export class Thread {
 
         return json
     }
-
-    get isHidden() {
-      return this.status > 3
-    }
 }
 
 export function threadFormDB(d) {  
@@ -57,6 +53,6 @@ export function threadFormDB(d) {
     },
     content_cid: d['content_cid'],
     pinned_cid: d['pined_cid'],
-    status: d['status']
+    hidden: d['hidden']
   })
 }

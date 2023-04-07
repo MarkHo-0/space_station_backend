@@ -10,7 +10,7 @@ export class Thread{
 
   async getOne(tid) {
     const [raw_thread] = await this.db.execute(
-      "SELECT t.*, u.nickname, c.like_count, c.dislike_count, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid = ?;", [tid]
+      "SELECT t.*, u.nickname, c.like_count, c.dislike_count FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid = ?;", [tid]
     )
     if (raw_thread.length !== 1) return null
     return threadFormDB(raw_thread[0])
@@ -24,7 +24,7 @@ export class Thread{
   async getMany(tid_array = []) {
     if (tid_array.length < 1) return []
 
-    const [raw_threads, _] = await this.db.query("SELECT t.*, u.nickname, c.like_count, c.dislike_count, c.status FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid IN (?) ORDER BY FIELD(t.tid, ?)",
+    const [raw_threads, _] = await this.db.query("SELECT t.*, u.nickname, c.like_count, c.dislike_count FROM threads t INNER JOIN users u ON u.uid = t.sender_uid INNER JOIN comments c ON c.cid = t.content_cid WHERE t.tid IN (?) ORDER BY FIELD(t.tid, ?)",
       [tid_array, tid_array]
     )
     return raw_threads.map(t => threadFormDB(t))
